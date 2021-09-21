@@ -16,6 +16,10 @@
         <servlet-name>UsersListServlet</servlet-name>
         <servlet-class>chat.servlets.UsersListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UploadFileServlet</servlet-name>
+        <servlet-class>chat.servlets.FileUploadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ChatServlet</servlet-name>
         <url-pattern>/chat</url-pattern>
@@ -31,5 +35,9 @@
     <servlet-mapping>
         <servlet-name>UsersListServlet</servlet-name>
         <url-pattern>/userslist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadFileServlet</servlet-name>
+        <url-pattern>/pages/chatroom/upload_file</url-pattern>
     </servlet-mapping>
 </web-app>
