@@ -176,6 +176,7 @@ $(function() { // onload...do
 
             success: function(r) {
                 refreshProblemsList(r);
+                alert("File loaded successfully");
             }
         });
 
