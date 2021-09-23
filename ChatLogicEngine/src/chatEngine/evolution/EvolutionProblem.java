@@ -1,6 +1,9 @@
 package chatEngine.evolution;
 
+import chatEngine.tasks.EvolutionaryTaskMembers;
+import chatEngine.tasks.RunEvolutionaryTask;
 import engine.Evolutionary;
+import engine.models.EndCondition;
 import engine.models.EvolutionDataSet;
 import models.Lesson;
 import models.TimeTableDataSet;
@@ -21,6 +24,7 @@ public class EvolutionProblem {
     EvolutionDataSet<Lesson> evolutionDataSet;
     Map<String,Evolutionary<Lesson>> evolutionRuns;
     String owner;
+
 
     public EvolutionProblem(int id,String name,String owner) {
         evolutionRuns = new HashMap<>();
@@ -144,5 +148,35 @@ public class EvolutionProblem {
         sbRules.append("__________________________________________________________\n");
         sbRules.append("\n");
         return sbRules;
+    }
+
+    public synchronized void runEvolution(String username) {
+//        if(this.evolutionRuns.containsKey(username)){
+//            return;
+//        }else{
+            Evolutionary<Lesson> evolutionary = new Evolutionary<>();
+            evolutionRuns.put(username,evolutionary);
+            EvolutionaryTaskMembers taskMembers = new EvolutionaryTaskMembers();
+            taskMembers.setTimeTable(timeTable);
+            taskMembers.setEvolutionEngineDataSet(timeTable.getEvolutionConfig());
+            RunEvolutionaryTask task = new RunEvolutionaryTask(taskMembers,"Generations",1000,100);
+            try {
+                timeTable.setGenerationsInterval(100);
+            }catch (Exception e){
+
+            }
+            evolutionary.run(timeTable, new EndCondition() {
+                @Override
+                public EndConditionType getEndCondition() {
+                    return EndConditionType.Generations;
+                }
+
+                @Override
+                public double getLimit() {
+                    return 1000;
+                }
+            });
+
+//        }
     }
 }

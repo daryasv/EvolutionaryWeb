@@ -3,7 +3,6 @@ package chat.servlets;
 import chat.constants.Constants;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
-import chatEngine.chat.SingleChatEntry;
 import chatEngine.evolution.EvolutionManager;
 import chatEngine.evolution.EvolutionProblem;
 import com.google.gson.Gson;
@@ -15,15 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
-@WebServlet(name = "EvolutionServlet", urlPatterns = {"/settings"})
-public class EvolutionServlet extends HttpServlet {
-
+@WebServlet(name = "EvolutionRunServlet", urlPatterns = {"/run_evolution"})
+public class EvolutionRunServlet extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        response.setContentType("application/json");
+
         EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
         String username = SessionUtils.getUsername(request);
         if (username == null) {
@@ -44,28 +40,21 @@ public class EvolutionServlet extends HttpServlet {
         Note that the synchronization here is on the ServletContext, and the one that also synchronized on it is the chat servlet when adding new chat lines.
          */
 
-        EvolutionProblem evolutionProblem;
+
         synchronized (getServletContext()) {
-            evolutionProblem = evolutionManager.getEvolutionProblemsMap().get(evolutionId);
+            evolutionManager.runEvolution(evolutionId,username);
         }
 
-        // log and create the response json string
-        EvolutionAndVersion cav = new EvolutionAndVersion(0,evolutionProblem);
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(cav);
-        logServerMessage(jsonResponse);
-
-        try (PrintWriter out = response.getWriter()) {
-            out.print(jsonResponse);
+        try(PrintWriter out = response.getWriter()){
+            out.println("success");
             out.flush();
         }
-
     }
 
     private void logServerMessage(String message){
         System.out.println(message);
     }
-    
+
     private static class EvolutionAndVersion {
 
         final private int version;
@@ -73,11 +62,7 @@ public class EvolutionServlet extends HttpServlet {
 
         public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem) {
             this.version = version;
-            if(evolutionProblem!=null && evolutionProblem.getTimeTable() !=null) {
-                this.settings = evolutionProblem.getTimeTableSettings();
-            }else{
-                settings = "";
-            }
+            this.settings = evolutionProblem.getTimeTableSettings();
         }
     }
 
@@ -119,4 +104,5 @@ public class EvolutionServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

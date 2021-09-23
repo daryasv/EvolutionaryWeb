@@ -7,14 +7,8 @@ import chat.models.EvolutionProblemItem;
 import chat.models.EvolutionProblems;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
-import chatEngine.evolution.EvolutionManager;
-import chatEngine.evolution.EvolutionaryTaskMembers;
 import com.google.gson.Gson;
 import models.TimeTableDataSet;
-import models.timeTable.Grade;
-import models.timeTable.Rule;
-import models.timeTable.Subject;
-import models.timeTable.Teacher;
 import schema.models.ETTDescriptor;
 
 import javax.servlet.ServletException;

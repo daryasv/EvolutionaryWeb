@@ -180,7 +180,7 @@ $(function() { // onload...do
             }
         });
 
-        // $("#input_file").val("");
+        $("#input_file").val("");
         // by default - we'll always return false so it doesn't redirect the user.
 
         return false;

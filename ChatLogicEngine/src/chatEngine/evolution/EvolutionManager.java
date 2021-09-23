@@ -27,4 +27,8 @@ public class EvolutionManager {
     public synchronized Map<Integer,EvolutionProblem> getEvolutionProblemsMap() {
         return Collections.unmodifiableMap(evolutionProblemsMap);
     }
+
+    public synchronized void runEvolution(int id,String username){
+        evolutionProblemsMap.get(id).runEvolution(username);
+    }
 }

@@ -10,10 +10,16 @@
     <link rel="stylesheet" href="evolution_run.css">
 </head>
 <body>
-    <div class="flex">
+    <div class="row flex">
         <button class="btn" style="margin-right: 10px;" onclick="back()">Back</button>
         <h2>Evolution #<span id="ev_id"></span></h2>
     </div>
-    <div><textarea readonly id="settings-text"></textarea></div>
+    <div class="row"><textarea readonly id="settings-text"></textarea></div>
+
+    <div class="row" id="evo-config">
+        <form id="run_evolution" method="POST">
+            <button id="run" type="submit">Run</button>
+        </form>
+    </div>
 </body>
 </html>

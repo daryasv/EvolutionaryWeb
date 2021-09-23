@@ -1,4 +1,5 @@
-var SETTINGS = buildUrlWithContextPath("/pages/evolutionrun/settings");
+var SETTINGS = buildUrlWithContextPath("settings");
+var RUN_URL = buildUrlWithContextPath("run_evolution");
 
 function getId(){
   const urlSearchParams = new URLSearchParams(window.location.search);
@@ -7,17 +8,42 @@ function getId(){
 
 var id = getId();
 
-$(function() {
+
+
+function back(){
+  location.href = "../chatroom/chatroom.html";
+}
+
+$(function() { // onload...do
   $('#ev_id').text(id);
 
   $.ajax({
     url: SETTINGS + "?evoId="+id,
     success: function(evolutionData) {
-        $('#settings-text').val(evolutionData.settings);
+      $('#settings-text').val(evolutionData.settings);
     }
   });
-});
+  $("#run_evolution").submit(function(e) {
+    var url = RUN_URL+"?evoId="+id;
+    e.preventDefault();
 
-function back(){
-  location.href = "../chatroom/chatroom.html";
-}
+    $.ajax({
+      data: "",
+      url: url,
+      // timeout: 10000,
+      method: "POST",
+      error: function() {
+        console.error("Failed to submit");
+        alert("Failed ")
+      },
+      success: function(r) {
+        alert("Success");
+      }
+    });
+
+    // $("#input_file").val("");
+    // by default - we'll always return false so it doesn't redirect the user.
+
+    return false;
+  });
+});
