@@ -18,7 +18,7 @@ public class Evolutionary<T> {
 
     public Evolutionary() {
         bestSolutions = new ArrayList<>();
-        globalBestSolution = null;
+        globalBestSolution = new SolutionFitness<>();
         genCounter = 0;
         isStopped = false;
         lastTime = 0;

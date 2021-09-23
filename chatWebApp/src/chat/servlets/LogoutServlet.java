@@ -2,7 +2,7 @@ package chat.servlets;
 
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
-import engine.users.UserManager;
+import chatEngine.users.UserManager;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

@@ -1,7 +1,8 @@
 package chat.utils;
 
-import engine.chat.ChatManager;
-import engine.users.UserManager;
+import chatEngine.chat.ChatManager;
+import chatEngine.evolution.EvolutionManager;
+import chatEngine.users.UserManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ public class ServletUtils {
 
 	private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
 	private static final String CHAT_MANAGER_ATTRIBUTE_NAME = "chatManager";
+	private static final String EVOLUTION_MANAGER_ATTRIBUTE_NAME = "evolutionManager";
 
 	/*
 	Note how the synchronization is done only on the question and\or creation of the relevant managers and once they exists -
@@ -19,6 +21,7 @@ public class ServletUtils {
 	 */
 	private static final Object userManagerLock = new Object();
 	private static final Object chatManagerLock = new Object();
+	private static final Object evolutionManagerLock = new Object();
 
 	public static UserManager getUserManager(ServletContext servletContext) {
 
@@ -39,6 +42,15 @@ public class ServletUtils {
 		return (ChatManager) servletContext.getAttribute(CHAT_MANAGER_ATTRIBUTE_NAME);
 	}
 
+	public static EvolutionManager getEvolutionManager(ServletContext servletContext) {
+		synchronized (evolutionManagerLock) {
+			if (servletContext.getAttribute(EVOLUTION_MANAGER_ATTRIBUTE_NAME) == null) {
+				servletContext.setAttribute(EVOLUTION_MANAGER_ATTRIBUTE_NAME, new EvolutionManager());
+			}
+		}
+		return (EvolutionManager) servletContext.getAttribute(EVOLUTION_MANAGER_ATTRIBUTE_NAME);
+	}
+
 	public static int getIntParameter(HttpServletRequest request, String name) {
 		String value = request.getParameter(name);
 		if (value != null) {
@@ -49,4 +61,6 @@ public class ServletUtils {
 		}
 		return INT_PARAMETER_ERROR;
 	}
+
+
 }

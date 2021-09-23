@@ -1,4 +1,4 @@
-package engine.users;
+package chatEngine.users;
 
 import java.util.Collections;
 import java.util.HashSet;

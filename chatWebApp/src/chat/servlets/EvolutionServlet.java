@@ -1,27 +1,30 @@
 package chat.servlets;
 
 import chat.constants.Constants;
-import chat.utils.SessionUtils;
 import chat.utils.ServletUtils;
-import com.google.gson.Gson;
-import chatEngine.chat.ChatManager;
+import chat.utils.SessionUtils;
 import chatEngine.chat.SingleChatEntry;
+import chatEngine.evolution.EvolutionManager;
+import chatEngine.evolution.EvolutionProblem;
+import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
-public class ChatServlet extends HttpServlet {
+@WebServlet(name = "EvolutionServlet", urlPatterns = {"/pages/evolutionrun/settings"})
+public class EvolutionServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         response.setContentType("application/json");
-        ChatManager chatManager = ServletUtils.getChatManager(getServletContext());
+        EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
         String username = SessionUtils.getUsername(request);
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/index.html");
@@ -31,27 +34,25 @@ public class ChatServlet extends HttpServlet {
         verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
         Obviously the UI should be ready for such a case and handle it properly
          */
-        int chatVersion = ServletUtils.getIntParameter(request, Constants.CHAT_VERSION_PARAMETER);
-        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
-            return;
-        }
+        int evolutionId = ServletUtils.getIntParameter(request, Constants.EVOLUTION_SETTINGS_ID);
+//        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
+//            return;
+//        }
 
         /*
         Synchronizing as minimum as I can to fetch only the relevant information from the chat manager and then only processing and sending this information onward
         Note that the synchronization here is on the ServletContext, and the one that also synchronized on it is the chat servlet when adding new chat lines.
          */
-        int chatManagerVersion = 0;
-        List<SingleChatEntry> chatEntries;
+
+        EvolutionProblem evolutionProblem;
         synchronized (getServletContext()) {
-            chatManagerVersion = chatManager.getVersion();
-            chatEntries = chatManager.getChatEntries(chatVersion);
+            evolutionProblem = evolutionManager.getEvolutionProblemsMap().get(evolutionId);
         }
 
         // log and create the response json string
-        ChatAndVersion cav = new ChatAndVersion(chatEntries, chatManagerVersion);
+        EvolutionAndVersion cav = new EvolutionAndVersion(0,evolutionProblem);
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(cav);
-        logServerMessage("Server Chat version: " + chatManagerVersion + ", User '" + username + "' Chat version: " + chatVersion);
         logServerMessage(jsonResponse);
 
         try (PrintWriter out = response.getWriter()) {
@@ -65,14 +66,14 @@ public class ChatServlet extends HttpServlet {
         System.out.println(message);
     }
     
-    private static class ChatAndVersion {
+    private static class EvolutionAndVersion {
 
-        final private List<SingleChatEntry> entries;
         final private int version;
+        final private String settings;
 
-        public ChatAndVersion(List<SingleChatEntry> entries, int version) {
-            this.entries = entries;
+        public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem) {
             this.version = version;
+            this.settings = evolutionProblem.getTimeTableSettings();
         }
     }
 

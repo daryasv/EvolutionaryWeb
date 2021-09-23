@@ -1,4 +1,4 @@
-package chat.utils;
+package chatEngine.evolution;
 
 import engine.Evolutionary;
 import engine.models.SolutionFitness;
@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EvolutionaryTaskMembers {
-    TimeTableDataSet timeTable;
-    EvolutionConfig evolutionEngineDataSet;
+    EvolutionProblem evolutionProblem;
     SolutionFitness<Lesson> globalBestSolution;
     List<SolutionFitness<Lesson>> bestSolutions;
     Evolutionary<Lesson> evolutionary;
@@ -21,19 +20,19 @@ public class EvolutionaryTaskMembers {
     }
 
     public EvolutionConfig getEvolutionEngineDataSet() {
-        return this.evolutionEngineDataSet;
+        return this.evolutionProblem.evolutionEngineDataSet;
     }
 
     public TimeTableDataSet getTimeTable() {
-        return timeTable;
+        return evolutionProblem.getTimeTable();
     }
 
     public void setTimeTable(TimeTableDataSet timeTable) {
-        this.timeTable = timeTable;
+        this.evolutionProblem.timeTable = timeTable;
     }
 
     public void setEvolutionEngineDataSet(EvolutionConfig evolutionEngineDataSet) {
-        this.evolutionEngineDataSet = evolutionEngineDataSet;
+        this.evolutionProblem.evolutionEngineDataSet = evolutionEngineDataSet;
     }
 
     public SolutionFitness<Lesson> getGlobalBestSolution() {

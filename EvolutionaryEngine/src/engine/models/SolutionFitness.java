@@ -10,6 +10,10 @@ public class SolutionFitness<T> implements Serializable {
     private double hardRulesAvg;
     private double softRulesAvg;
 
+    public SolutionFitness(){
+        fitness = 0;
+    }
+
     public SolutionFitness(Solution<T> solution, double fitness, HashMap<IRule, Double> rulesFitness, double hardRulesAvg, double softRulesAvg) {
         this.solution = solution;
         this.fitness = fitness;

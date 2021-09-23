@@ -3,7 +3,7 @@ package chat.servlets;
 import chat.constants.Constants;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
-import engine.chat.ChatManager;
+import chatEngine.chat.ChatManager;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

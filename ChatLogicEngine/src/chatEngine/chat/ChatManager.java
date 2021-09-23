@@ -1,4 +1,4 @@
-package engine.chat;
+package chatEngine.chat;
 
 import java.util.ArrayList;
 import java.util.List;

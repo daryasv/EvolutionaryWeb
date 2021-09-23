@@ -2,6 +2,7 @@ var chatVersion = 0;
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var CHAT_LIST_URL = buildUrlWithContextPath("chat");
+var EVOLUTION_PROBLEM_LIST_URL = buildUrlWithContextPath("evolution");
 
 //users = a list of usernames, essentially an array of javascript strings:
 // ["moshe","nachum","nachche"...]
@@ -18,6 +19,21 @@ function refreshUsersList(users) {
             .appendTo($("#userslist"));
     });
 }
+
+function refreshProblemsList(problems) {
+    //clear all current users
+    $("#evo_pro_list").empty();
+
+    // rebuild the list of users: scan all users and add them to the list of users
+    $.each(problems.items || [], function(index, item) {
+        console.log("Adding problem #" + index + ": " + item.id);
+
+        //create a new <li> tag with a value in it and append it to the #userslist (div with id=userslist) element
+        $('<li> id:' + item.id + '; users:'+ item.totalUsers + '<button onclick="openEvoSettings('+item.id+')">open</button>'+ '</li>')
+            .appendTo($("#evo_pro_list"));
+    });
+}
+
 
 //entries = the added chat strings represented as a single string
 function appendToChatArea(entries) {
@@ -130,3 +146,46 @@ $(function() {
     //on each call it triggers another execution of itself later (1 second later)
     triggerAjaxChatContent();
 });
+
+function ajaxProblemsList() {
+    $.ajax({
+        url: EVOLUTION_PROBLEM_LIST_URL,
+        success: function(evoPro) {
+            refreshProblemsList(evoPro);
+        }
+    });
+}
+
+$(function() { // onload...do
+    //add a function to the submit event
+    $("#upload_file").submit(function(e) {
+        var url = this.action;
+        e.preventDefault();
+
+        $.ajax({
+            data: new FormData(document.getElementById("upload_file")),
+            url: url,
+            processData: false,
+            contentType: false,
+            // timeout: 10000,
+            method: "POST",
+            error: function() {
+                console.error("Failed to submit");
+                alert("Failed to load file")
+            },
+
+            success: function(r) {
+                refreshProblemsList(r);
+            }
+        });
+
+        // $("#input_file").val("");
+        // by default - we'll always return false so it doesn't redirect the user.
+
+        return false;
+    });
+});
+
+function openEvoSettings(number){
+    location.href = "../evolutionrun/evolution_run.html?id="+number;
+}

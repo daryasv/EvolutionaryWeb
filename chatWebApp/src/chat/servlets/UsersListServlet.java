@@ -2,7 +2,7 @@ package chat.servlets;
 
 import chat.utils.ServletUtils;
 import com.google.gson.Gson;
-import engine.users.UserManager;
+import chatEngine.users.UserManager;
 
 import java.io.IOException;
 import java.io.PrintWriter;
