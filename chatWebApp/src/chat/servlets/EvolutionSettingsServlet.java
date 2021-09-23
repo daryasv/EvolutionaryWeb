@@ -34,13 +34,26 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@WebServlet(name = "GetFileUploadServlet", urlPatterns = {"/pages/chatroom/upload_file"})
+@WebServlet(name = "EvolutionSettingsServlet", urlPatterns = {"/get_settings","/pages/chatroom/upload_settings"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
-public class FileUploadServlet extends HttpServlet {
+public class EvolutionSettingsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("chatroom/chatroom2.html");
+        response.setContentType("application/json");
+
+        List<EvolutionProblemItem> items = new ArrayList<>();
+        synchronized (getServletContext()) {
+            items = ServletUtils.getEvolutionManager(getServletContext()).getEvolutionProblemsMap().values().stream().map(EvolutionProblemItem::new).collect(Collectors.toList());
+        }
+
+        EvolutionProblems problems = new EvolutionProblems(0, items);
+        Gson gson = new Gson();
+        String jsonResponse = gson.toJson(problems);
+        try (PrintWriter out = response.getWriter()) {
+            out.print(jsonResponse);
+            out.flush();
+        }
     }
 
     @Override

@@ -8,6 +8,8 @@ function getId(){
 var id = getId();
 
 $(function() {
+  $('#ev_id').text(id);
+
   $.ajax({
     url: SETTINGS + "?evoId="+id,
     success: function(evolutionData) {
@@ -15,3 +17,7 @@ $(function() {
     }
   });
 });
+
+function back(){
+  location.href = "../chatroom/chatroom.html";
+}

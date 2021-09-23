@@ -2,7 +2,7 @@ var chatVersion = 0;
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var CHAT_LIST_URL = buildUrlWithContextPath("chat");
-var EVOLUTION_PROBLEM_LIST_URL = buildUrlWithContextPath("evolution");
+var EVOLUTION_PROBLEM_LIST_URL = buildUrlWithContextPath("get_settings");
 
 //users = a list of usernames, essentially an array of javascript strings:
 // ["moshe","nachum","nachche"...]
@@ -141,7 +141,7 @@ $(function() {
 
     //The users list is refreshed automatically every second
     setInterval(ajaxUsersList, refreshRate);
-    
+    setInterval(ajaxProblemsList,refreshRate);
     //The chat content is refreshed only once (using a timeout) but
     //on each call it triggers another execution of itself later (1 second later)
     triggerAjaxChatContent();

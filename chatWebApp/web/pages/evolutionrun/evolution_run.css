@@ -2,3 +2,12 @@
     width: 100%;
     height: 300px;
 }
+
+.flex{
+    display: flex;
+    align-items: center;
+}
+
+body{
+    padding:10px;
+}
