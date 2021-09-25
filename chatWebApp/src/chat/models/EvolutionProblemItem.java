@@ -18,9 +18,7 @@ public class EvolutionProblemItem {
         id = evolutionProblem.getId();
         totalUsers = 0;
         totalUsers = evolutionProblem.getEvolutionRuns().size();
-        bestFitness = 0;
-        Optional<Double> best = evolutionProblem.getEvolutionRuns().values().stream().map(Evolutionary::getGlobalBestSolution).map(SolutionFitness::getFitness).max(Double::compare);
-        best.ifPresent(aDouble -> bestFitness = aDouble);
+        this.bestFitness = 0;//todo: set best
     }
 
 }

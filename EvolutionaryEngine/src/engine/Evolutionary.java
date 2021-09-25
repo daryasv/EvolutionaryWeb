@@ -2,6 +2,7 @@ package engine;
 
 import engine.models.*;
 
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -179,7 +180,6 @@ public class Evolutionary<T> {
         }
 
         list.addAll(elites);
-
         return new SelectionResult<T>(elites,list);
     }
 

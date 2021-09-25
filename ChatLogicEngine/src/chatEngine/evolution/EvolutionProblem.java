@@ -22,13 +22,12 @@ public class EvolutionProblem {
     TimeTableDataSet timeTable;
     EvolutionConfig evolutionEngineDataSet;
     EvolutionDataSet<Lesson> evolutionDataSet;
-    Map<String,Evolutionary<Lesson>> evolutionRuns;
+    Map<String, RunEvolutionaryTask> evolutionRuns;
     String owner;
 
 
-    public EvolutionProblem(int id,String name,String owner) {
+    public EvolutionProblem(int id, String name, String owner) {
         evolutionRuns = new HashMap<>();
-        evolutionRuns.put(owner,new Evolutionary<>());
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -58,12 +57,12 @@ public class EvolutionProblem {
         return id;
     }
 
-    public synchronized Map<String,Evolutionary<Lesson>> getEvolutionRuns(){
+    public synchronized Map<String, RunEvolutionaryTask> getEvolutionRuns() {
         return Collections.unmodifiableMap(this.evolutionRuns);
     }
 
 
-    public String getTimeTableSettings(){
+    public String getTimeTableSettings() {
         StringBuilder sbXmlEttSettings = new StringBuilder();
 
         HashMap<Integer, Subject> subjects = this.getTimeTable().getTimeTableMembers().getSubjects();
@@ -82,8 +81,7 @@ public class EvolutionProblem {
         return sbXmlEttSettings.toString();
     }
 
-    private StringBuilder toStringSubjects(HashMap<Integer, Subject> subjects)
-    {
+    private StringBuilder toStringSubjects(HashMap<Integer, Subject> subjects) {
         StringBuilder sbSubjects = new StringBuilder();
         sbSubjects.append("SUBJECTS\n");
         sbSubjects.append("__________________________________________________________\n");
@@ -94,15 +92,15 @@ public class EvolutionProblem {
         return sbSubjects;
     }
 
-    private StringBuilder toStringTeachers(HashMap<Integer, Teacher> teachers,HashMap<Integer, Subject> subjects){
+    private StringBuilder toStringTeachers(HashMap<Integer, Teacher> teachers, HashMap<Integer, Subject> subjects) {
         StringBuilder sbTeachers = new StringBuilder();
         sbTeachers.append("TEACHERS\n");
         sbTeachers.append("__________________________________________________________\n");
-        for(Map.Entry<Integer, Teacher > entry : teachers.entrySet()){
+        for (Map.Entry<Integer, Teacher> entry : teachers.entrySet()) {
             sbTeachers.append(String.format("Teacher ID %d\n", entry.getKey()));
             sbTeachers.append(String.format("Teaching subjects:\n"));
-            for(int i=0; i<entry.getValue().getSubjectsIdsList().size();i++){
-                int subjectID=entry.getValue().getSubjectsIdsList().get(i);
+            for (int i = 0; i < entry.getValue().getSubjectsIdsList().size(); i++) {
+                int subjectID = entry.getValue().getSubjectsIdsList().get(i);
                 sbTeachers.append(String.format("       Subject ID: %d  |  ", subjectID));
                 sbTeachers.append(String.format("Name: %s\n", subjects.get(subjectID).getName()));
             }
@@ -114,7 +112,7 @@ public class EvolutionProblem {
         return sbTeachers;
     }
 
-    private StringBuilder toStringGrades(HashMap<Integer, Grade> grades,HashMap<Integer, Subject> subjects) {
+    private StringBuilder toStringGrades(HashMap<Integer, Grade> grades, HashMap<Integer, Subject> subjects) {
         StringBuilder sbGrades = new StringBuilder();
         sbGrades.append("GRADES\n");
         sbGrades.append("__________________________________________________________\n");
@@ -133,14 +131,14 @@ public class EvolutionProblem {
         return sbGrades;
     }
 
-    private StringBuilder toStringRules(List<Rule> rules){
+    private StringBuilder toStringRules(List<Rule> rules) {
         StringBuilder sbRules = new StringBuilder();
         sbRules.append("RULES\n");
         sbRules.append("__________________________________________________________\n");
-        for(int i=0; i<rules.size();i++){
-            if(rules.get(i).isHard())
+        for (int i = 0; i < rules.size(); i++) {
+            if (rules.get(i).isHard())
                 sbRules.append(String.format("Rule Name: %s  |  Type: Hard", rules.get(i).getName()));
-            else{
+            else {
                 sbRules.append(String.format("Rule Name: %s  |  Type: Soft", rules.get(i).getName()));
             }
             sbRules.append("\n");
@@ -154,18 +152,27 @@ public class EvolutionProblem {
 //        if(this.evolutionRuns.containsKey(username)){
 //            return;
 //        }else{
-            Evolutionary<Lesson> evolutionary = new Evolutionary<>();
-            evolutionRuns.put(username,evolutionary);
-            EvolutionaryTaskMembers taskMembers = new EvolutionaryTaskMembers();
-            taskMembers.setTimeTable(timeTable);
-            taskMembers.setEvolutionEngineDataSet(timeTable.getEvolutionConfig());
-            RunEvolutionaryTask task = new RunEvolutionaryTask(taskMembers,"Generations",1000,100);
+        RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,timeTable.getEvolutionConfig(),"Generations",1000,100);
+        new Thread(runEvolutionaryTask).start();
+        evolutionRuns.put(username,runEvolutionaryTask);
+    }
+
+    public class AsyncWebService implements Runnable {
+        Evolutionary<Lesson> evolutionary;
+        TimeTableDataSet timeTableDataSet;
+
+        public AsyncWebService(Evolutionary<Lesson> evolutionary, TimeTableDataSet timeTableDataSet) {
+            this.evolutionary = evolutionary;
+            this.timeTableDataSet = timeTableDataSet;
+        }
+
+        public void run() {
             try {
-                timeTable.setGenerationsInterval(100);
-            }catch (Exception e){
+                timeTableDataSet.setGenerationsInterval(100);
+            } catch (Exception e) {
 
             }
-            evolutionary.run(timeTable, new EndCondition() {
+            evolutionary.run(timeTableDataSet, new EndCondition() {
                 @Override
                 public EndConditionType getEndCondition() {
                     return EndConditionType.Generations;
@@ -176,7 +183,9 @@ public class EvolutionProblem {
                     return 1000;
                 }
             });
-
-//        }
+        }
     }
 }
+
+
+

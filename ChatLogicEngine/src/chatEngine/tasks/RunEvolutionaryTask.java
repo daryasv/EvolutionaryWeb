@@ -1,16 +1,23 @@
 package chatEngine.tasks;
 
+import engine.Evolutionary;
 import engine.models.EndCondition;
 import javafx.concurrent.Task;
+import models.Lesson;
+import models.TimeTableDataSet;
+import models.evolution.EvolutionConfig;
 
-public class RunEvolutionaryTask extends Task<Boolean> {
+public class RunEvolutionaryTask implements Runnable {
 
-    EvolutionaryTaskMembers evolutionaryTaskMembers;
+    TimeTableDataSet timeTableDataSet;
+    EvolutionConfig evolutionConfig;
     EndCondition endCondition;
-    private int interval;
+    private final int interval;
+    private Evolutionary<Lesson> evolutionary = null;
 
-    public RunEvolutionaryTask(EvolutionaryTaskMembers evolutionaryTaskMembers, String endConditionType, double limit, int interval) {
-        this.evolutionaryTaskMembers = evolutionaryTaskMembers;
+    public RunEvolutionaryTask(TimeTableDataSet timeTableDataSet,EvolutionConfig evolutionConfig, String endConditionType, double limit, int interval) {
+        this.timeTableDataSet = timeTableDataSet;
+        this.evolutionConfig = evolutionConfig;
         EndCondition.EndConditionType endConditionTypeEnum = EndCondition.EndConditionType.valueOfLabel(endConditionType);
         this.interval = interval;
         endCondition = new EndCondition() {
@@ -27,28 +34,18 @@ public class RunEvolutionaryTask extends Task<Boolean> {
     }
 
     @Override
-    protected Boolean call() throws Exception {
+    public void run() {
         try {
-            if(evolutionaryTaskMembers.getEvolutionary().getGlobalBestSolution() == null){
-                updateProgress(0,1);
-            }
-            evolutionaryTaskMembers.getTimeTable().setGenerationsInterval(interval);
-            evolutionaryTaskMembers.getEvolutionary().run(evolutionaryTaskMembers.getTimeTable(),endCondition,this::updateProgress);
-            evolutionaryTaskMembers.setGlobalBestSolution(evolutionaryTaskMembers.getEvolutionary().getGlobalBestSolution());
-            evolutionaryTaskMembers.setBestSolutions(evolutionaryTaskMembers.getEvolutionary().getBestSolutions());
-            updateMessage("Done...");
+            evolutionary = new Evolutionary<>();
+            timeTableDataSet.setGenerationsInterval(interval);
+            evolutionary.run(timeTableDataSet,endCondition);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return Boolean.TRUE;
     }
 
     public void stopAlgo(){
-        evolutionaryTaskMembers.getEvolutionary().stop();
-    }
-
-    public EvolutionaryTaskMembers getEvolutionaryTaskMembers(){
-        return this.evolutionaryTaskMembers;
+        evolutionary.stop();
     }
 }
