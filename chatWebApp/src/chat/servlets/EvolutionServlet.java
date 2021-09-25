@@ -3,9 +3,9 @@ package chat.servlets;
 import chat.constants.Constants;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
-import chatEngine.chat.SingleChatEntry;
 import chatEngine.evolution.EvolutionManager;
 import chatEngine.evolution.EvolutionProblem;
+import chatEngine.tasks.RunEvolutionaryTask;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 @WebServlet(name = "EvolutionServlet", urlPatterns = {"/settings"})
 public class EvolutionServlet extends HttpServlet {
@@ -50,7 +49,7 @@ public class EvolutionServlet extends HttpServlet {
         }
 
         // log and create the response json string
-        EvolutionAndVersion cav = new EvolutionAndVersion(0,evolutionProblem);
+        EvolutionAndVersion cav = new EvolutionAndVersion(0,evolutionProblem,username);
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(cav);
         logServerMessage(jsonResponse);
@@ -70,11 +69,24 @@ public class EvolutionServlet extends HttpServlet {
 
         final private int version;
         final private String settings;
+        private boolean running;
+        private boolean finished;
+        private double percentage;
 
-        public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem) {
+        public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
             this.version = version;
+            running = false;
+            finished = false;
+            percentage = 0;
             if(evolutionProblem!=null && evolutionProblem.getTimeTable() !=null) {
                 this.settings = evolutionProblem.getTimeTableSettings();
+                boolean exists = evolutionProblem.getEvolutionRuns().containsKey(username);
+                if(exists){
+                    RunEvolutionaryTask task = evolutionProblem.getEvolutionRuns().get(username);
+                    this.running = task.isRunning();
+                    this.finished = task.isFinished();
+                    this.percentage = task.getPercentage();
+                }
             }else{
                 settings = "";
             }

@@ -14,15 +14,22 @@ function back(){
   location.href = "../chatroom/chatroom.html";
 }
 
-$(function() { // onload...do
-  $('#ev_id').text(id);
-
+function getPageData(){
   $.ajax({
     url: SETTINGS + "?evoId="+id,
     success: function(evolutionData) {
       $('#settings-text').val(evolutionData.settings);
     }
   });
+}
+
+$(function() { // onload...do
+  $('#ev_id').text(id);
+
+ getPageData();
+
+  setInterval(getPageData,1000);
+
   $("#run_evolution").submit(function(e) {
     var url = RUN_URL+"?evoId="+id;
     e.preventDefault();
