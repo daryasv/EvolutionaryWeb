@@ -19,6 +19,9 @@ function getPageData(){
     url: SETTINGS + "?evoId="+id,
     success: function(evolutionData) {
       $('#settings-text').val(evolutionData.settings);
+      const percentage = evolutionData.percentage || 0;
+      $('#progress-bar').css('width',(percentage)+'%');
+      $('#progress-text').text((percentage) + '%');
     }
   });
 }
