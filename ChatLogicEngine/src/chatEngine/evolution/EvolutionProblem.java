@@ -19,11 +19,10 @@ import java.util.*;
 public class EvolutionProblem {
     int id;
     String name;
+    String owner;
     TimeTableDataSet timeTable;
     EvolutionConfig evolutionEngineDataSet;
-    EvolutionDataSet<Lesson> evolutionDataSet;
     Map<String, RunEvolutionaryTask> evolutionRuns;
-    String owner;
 
 
     public EvolutionProblem(int id, String name, String owner) {
@@ -155,35 +154,6 @@ public class EvolutionProblem {
         RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,timeTable.getEvolutionConfig(),"Generations",1000,100);
         new Thread(runEvolutionaryTask).start();
         evolutionRuns.put(username,runEvolutionaryTask);
-    }
-
-    public class AsyncWebService implements Runnable {
-        Evolutionary<Lesson> evolutionary;
-        TimeTableDataSet timeTableDataSet;
-
-        public AsyncWebService(Evolutionary<Lesson> evolutionary, TimeTableDataSet timeTableDataSet) {
-            this.evolutionary = evolutionary;
-            this.timeTableDataSet = timeTableDataSet;
-        }
-
-        public void run() {
-            try {
-                timeTableDataSet.setGenerationsInterval(100);
-            } catch (Exception e) {
-
-            }
-            evolutionary.run(timeTableDataSet, new EndCondition() {
-                @Override
-                public EndConditionType getEndCondition() {
-                    return EndConditionType.Generations;
-                }
-
-                @Override
-                public double getLimit() {
-                    return 1000;
-                }
-            });
-        }
     }
 }
 

@@ -14,14 +14,21 @@ function back(){
   location.href = "../chatroom/chatroom.html";
 }
 
+function loadPageData(evolutionData){
+  $('#settings-text').val(evolutionData.settings);
+  const percentage = evolutionData.percentage || 0;
+  $('#progress-bar').css('width',(percentage)+'%');
+  $('#progress-text').text((percentage) + '%');
+  if(evolutionData.solutionFitness){
+    $('#solutionTable').html(evolutionData.solutionFitness) ;
+  }
+}
+
 function getPageData(){
   $.ajax({
     url: SETTINGS + "?evoId="+id,
     success: function(evolutionData) {
-      $('#settings-text').val(evolutionData.settings);
-      const percentage = evolutionData.percentage || 0;
-      $('#progress-bar').css('width',(percentage)+'%');
-      $('#progress-text').text((percentage) + '%');
+      loadPageData(evolutionData);
     }
   });
 }

@@ -7,6 +7,9 @@ import chatEngine.evolution.EvolutionManager;
 import chatEngine.evolution.EvolutionProblem;
 import chatEngine.tasks.RunEvolutionaryTask;
 import com.google.gson.Gson;
+import engine.models.Solution;
+import engine.models.SolutionFitness;
+import models.Lesson;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -72,6 +75,7 @@ public class EvolutionServlet extends HttpServlet {
         private boolean running;
         private boolean finished;
         private double percentage;
+        private String solutionFitness;
 
         public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
             this.version = version;
@@ -86,6 +90,27 @@ public class EvolutionServlet extends HttpServlet {
                     this.running = task.isRunning();
                     this.finished = task.isFinished();
                     this.percentage = task.getPercentage();
+                    if(this.finished) {
+                        SolutionFitness<Lesson> solutionFitness = task.getGlobalSolution();
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("<table>");
+                        sb.append("<tr>");
+                        sb.append("<th>Teacher name</th>");
+                        sb.append("<th>Subject id</th>");
+                        sb.append("</tr>");
+                        for (Lesson lesson : solutionFitness.getSolution().getList()) {
+                            sb.append("<tr>");
+                            sb.append("<td>");
+                            sb.append(lesson.getTeacherId());
+                            sb.append("</td>");
+                            sb.append("<td>");
+                            sb.append(lesson.getSubjectId());
+                            sb.append("</td>");
+                            sb.append("</tr>");
+                        }
+                        sb.append("</table>");
+                        this.solutionFitness = sb.toString();
+                    }
                 }
             }else{
                 settings = "";

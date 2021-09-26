@@ -3,10 +3,13 @@ package chatEngine.tasks;
 import engine.Evolutionary;
 import engine.models.EndCondition;
 import engine.models.EngineProgressInterface;
+import engine.models.SolutionFitness;
 import javafx.concurrent.Task;
 import models.Lesson;
 import models.TimeTableDataSet;
 import models.evolution.EvolutionConfig;
+
+import java.util.List;
 
 public class RunEvolutionaryTask implements Runnable {
 
@@ -77,5 +80,13 @@ public class RunEvolutionaryTask implements Runnable {
 
     public boolean isRunning(){
         return this.running;
+    }
+
+    public SolutionFitness<Lesson> getGlobalSolution(){
+        return evolutionary.getGlobalBestSolution();
+    }
+
+    public List<SolutionFitness<Lesson>> getBestSolution(){
+        return evolutionary.getBestSolutions();
     }
 }
