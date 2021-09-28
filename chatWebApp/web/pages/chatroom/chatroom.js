@@ -53,7 +53,7 @@ function refreshProblemsList(problems) {
             '</td>' +
             '<td>'+(item.totalUsers || 0) + '</td>' +
             '<td>'+(item.bestFitness || 0).toFixed(2) +'</td>' +
-            '<td><button onclick="openEvoSettings('+item.id+')">open</button></td>' +
+            '<td><button class="btn btn-primary" onclick="openEvoSettings('+item.id+')">open</button></td>' +
             '</tr>')
             .appendTo($("#evo_pro_table"));
     });
