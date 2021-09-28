@@ -10,6 +10,7 @@ import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
 import chatEngine.evolution.EvolutionManager;
 import com.google.gson.Gson;
+import exception.ValidationException;
 import models.TimeTableDataSet;
 import schema.models.ETTDescriptor;
 
@@ -66,38 +67,49 @@ public class EvolutionSettingsServlet extends HttpServlet {
         Collection<Part> parts = request.getParts();
 
         StringBuilder fileContent = new StringBuilder();
-
-        for (Part part : parts) {
-            if(!part.getHeader("content-type").equals("text/xml")){
-                //todo: error;
-                System.out.println("Not xml");
-            }
-            //to write the content of the file to a string
-            fileContent.append(readFromInputStream(part.getInputStream()));
-        }
         try {
+            for (Part part : parts) {
+                if (!part.getHeader("content-type").equals("text/xml")) {
+                    throw new ValidationException("File is not xml");
+                }
+                //to write the content of the file to a string
+                fileContent.append(readFromInputStream(part.getInputStream()));
+            }
+
             TimeTableDataSet timeTableDataSet = loadFileContent(fileContent.toString());
             List<EvolutionProblemItem> items = new ArrayList<>();
-            if(timeTableDataSet!=null){
-                String username = SessionUtils.getUsername(request);
-                synchronized (getServletContext()){
-                    ServletUtils.getEvolutionManager(getServletContext()).addEvolutionProblem("file",username,timeTableDataSet);
-                    items = ServletUtils.getEvolutionManager(getServletContext()).getEvolutionProblemsMap().values().stream().map(EvolutionProblemItem::new).collect(Collectors.toList());
-                }
+            String username = SessionUtils.getUsername(request);
+            int settingsVersion = 0;
+            synchronized (getServletContext()) {
+                EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
+                evolutionManager.addEvolutionProblem("file", username, timeTableDataSet);
+                settingsVersion = evolutionManager.getVersion();
+                items = evolutionManager.getEvolutionProblemsMap().values().stream().map(EvolutionProblemItem::new).collect(Collectors.toList());
             }
-            EvolutionProblems problems = new EvolutionProblems(0,items);
+            EvolutionProblems problems = new EvolutionProblems(settingsVersion, items);
             Gson gson = new Gson();
             String jsonResponse = gson.toJson(problems);
             try (PrintWriter out = response.getWriter()) {
                 out.print(jsonResponse);
                 out.flush();
             }
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        } catch (ValidationException e) {
+            setError(e.getMessage(),response);
         }
     }
 
-    private TimeTableDataSet loadFileContent(String fileContent) throws Exception {
+    private void setError(String text,HttpServletResponse res) {
+        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        res.setContentType("text/plain");
+        try {
+            res.getWriter().println(text);
+            res.getWriter().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private TimeTableDataSet loadFileContent(String fileContent) throws ValidationException {
         try{
             //load xml file into ETT classes
 //            if(!absolutePath.endsWith(".xml")){
@@ -110,9 +122,8 @@ public class EvolutionSettingsServlet extends HttpServlet {
             return new TimeTableDataSet(descriptor);
         } catch (JAXBException e) {
             //ProgramManager.systemSetting.IS_FILE_LOADED.status=false;
-            System.out.println("Failed to parse xml");
+            throw new ValidationException("Failed to parse xml. Check if suites the xsd");
         }
-        return null;
     }
 
 
@@ -120,10 +131,4 @@ public class EvolutionSettingsServlet extends HttpServlet {
         return new Scanner(inputStream).useDelimiter("\\Z").next();
     }
 
-    private void printFileContent(String content, PrintWriter out) {
-        out.println("<h2>File content:</h2>");
-        out.println("<textarea style=\"width:100%;height:400px\">");
-        out.println(content);
-        out.println("</textarea>");
-    }
 }

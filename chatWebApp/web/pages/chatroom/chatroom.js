@@ -141,7 +141,7 @@ $(function() { // onload...do
             data: $(this).serialize(),
             url: this.action,
             timeout: 2000,
-            error: function() {
+            error: function(e) {
                 console.error("Failed to submit");
             },
             success: function(r) {
@@ -198,9 +198,9 @@ $(function() { // onload...do
             contentType: false,
             // timeout: 10000,
             method: "POST",
-            error: function() {
+            error: function(error) {
                 console.error("Failed to submit");
-                alert("Failed to load file")
+                alert(error.responseText || "Failed to load file")
             },
 
             success: function(r) {
