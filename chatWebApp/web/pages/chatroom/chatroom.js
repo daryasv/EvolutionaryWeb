@@ -1,4 +1,5 @@
 var chatVersion = 0;
+var settingsVersion = 0;
 var refreshRate = 2000; //milli seconds
 var USER_LIST_URL = buildUrlWithContextPath("userslist");
 var CHAT_LIST_URL = buildUrlWithContextPath("chat");
@@ -21,16 +22,40 @@ function refreshUsersList(users) {
 }
 
 function refreshProblemsList(problems) {
-    //clear all current users
-    $("#evo_pro_list").empty();
-
+    //clear all current settings
+    $("#evo_pro_table").empty();
+    $('<tr>' +
+        '<th scope="col">ID</th>' +
+        '<th scope="col">Owner</th>' +
+        '<th scope="col">Data</th>' +
+        '<th scope="col">Rules</th>' +
+        '<th scope="col">Users ran</th>' +
+        '<th scope="col">Best fitness</th>' +
+        '<th scope="col"></th>' +
+        '</tr>')
+        .appendTo($("#evo_pro_table"));
     // rebuild the list of users: scan all users and add them to the list of users
     $.each(problems.items || [], function(index, item) {
-        console.log("Adding problem #" + index + ": " + item.id);
-
         //create a new <li> tag with a value in it and append it to the #userslist (div with id=userslist) element
-        $('<li> id:' + item.id + '; users:'+ item.totalUsers + '<button onclick="openEvoSettings('+item.id+')">open</button>'+ '</li>')
-            .appendTo($("#evo_pro_list"));
+        $('<tr>' +
+            '<td>'+item.id+'</td>' +
+            '<td>'+item.owner+'</td>' +
+            '<td>'+
+            '<div>Days: '+item.days+'</div>'+
+            '<div>Hours: '+item.hours+'</div>'+
+            '<div>Classes: '+item.classes+'</div>'+
+            '<div>Teachers: '+item.teachers+'</div>'+
+            '<div>Subjects: '+item.subjects+'</div>'+
+            '</td>' +
+            '<td>' +
+            '<div>Hard: '+item.hardRules+'</div>'+
+            '<div>Soft: '+item.softRules+'</div>'+
+            '</td>' +
+            '<td>'+(item.totalUsers || 0) + '</td>' +
+            '<td>'+(item.bestFitness || 0).toFixed(2) +'</td>' +
+            '<td><button onclick="openEvoSettings('+item.id+')">open</button></td>' +
+            '</tr>')
+            .appendTo($("#evo_pro_table"));
     });
 }
 
@@ -150,8 +175,12 @@ $(function() {
 function ajaxProblemsList() {
     $.ajax({
         url: EVOLUTION_PROBLEM_LIST_URL,
+        data:"settingsversion=" + settingsVersion,
         success: function(evoPro) {
-            refreshProblemsList(evoPro);
+            if(evoPro.version !== settingsVersion) {
+                settingsVersion = evoPro.version;
+                refreshProblemsList(evoPro);
+            }
         }
     });
 }

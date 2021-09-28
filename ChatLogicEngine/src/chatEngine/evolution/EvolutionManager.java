@@ -31,4 +31,8 @@ public class EvolutionManager {
     public synchronized void runEvolution(int id,String username){
         evolutionProblemsMap.get(id).runEvolution(username);
     }
+
+    public synchronized int getVersion() {
+        return lastProblemId;
+    }
 }

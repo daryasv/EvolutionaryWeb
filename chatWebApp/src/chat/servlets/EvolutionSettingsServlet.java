@@ -3,10 +3,12 @@ package chat.servlets;
 //taken from: http://www.servletworld.com/servlet-tutorials/servlet3/multipartconfig-file-upload-example.html
 // and http://docs.oracle.com/javaee/6/tutorial/doc/glraq.html
 
+import chat.constants.Constants;
 import chat.models.EvolutionProblemItem;
 import chat.models.EvolutionProblems;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
+import chatEngine.evolution.EvolutionManager;
 import com.google.gson.Gson;
 import models.TimeTableDataSet;
 import schema.models.ETTDescriptor;
@@ -37,11 +39,18 @@ public class EvolutionSettingsServlet extends HttpServlet {
         response.setContentType("application/json");
 
         List<EvolutionProblemItem> items = new ArrayList<>();
+        int clientVersion = ServletUtils.getIntParameter(request, Constants.SETTINGS_VERSION_PARAM);
+        if (clientVersion == Constants.INT_PARAMETER_ERROR) {
+            return;
+        }
+        int managerVersion = 0;
         synchronized (getServletContext()) {
-            items = ServletUtils.getEvolutionManager(getServletContext()).getEvolutionProblemsMap().values().stream().map(EvolutionProblemItem::new).collect(Collectors.toList());
+            EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
+            managerVersion = evolutionManager.getVersion();
+            items = evolutionManager.getEvolutionProblemsMap().values().stream().map(EvolutionProblemItem::new).collect(Collectors.toList());
         }
 
-        EvolutionProblems problems = new EvolutionProblems(0, items);
+        EvolutionProblems problems = new EvolutionProblems(managerVersion, items);
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(problems);
         try (PrintWriter out = response.getWriter()) {
