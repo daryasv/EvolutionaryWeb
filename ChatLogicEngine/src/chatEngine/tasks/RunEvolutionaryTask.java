@@ -14,17 +14,17 @@ import java.util.List;
 public class RunEvolutionaryTask implements Runnable {
 
     TimeTableDataSet timeTableDataSet;
-    EvolutionConfig evolutionConfig;
     EndCondition endCondition;
     private final int interval;
     private Evolutionary<Lesson> evolutionary = null;
     double percentage;
     boolean finished = false;
     boolean running = false;
+    boolean pause = false;
 
     public RunEvolutionaryTask(TimeTableDataSet timeTableDataSet,EvolutionConfig evolutionConfig, String endConditionType, double limit, int interval) {
         this.timeTableDataSet = timeTableDataSet;
-        this.evolutionConfig = evolutionConfig;
+        this.timeTableDataSet.setEvolutionConfig(evolutionConfig);
         EndCondition.EndConditionType endConditionTypeEnum = EndCondition.EndConditionType.valueOfLabel(endConditionType);
         this.interval = interval;
         endCondition = new EndCondition() {
@@ -46,7 +46,9 @@ public class RunEvolutionaryTask implements Runnable {
         try {
             finished = false;
             running = true;
-            evolutionary = new Evolutionary<>();
+            if(!pause || evolutionary == null) {
+                evolutionary = new Evolutionary<>();
+            }
             timeTableDataSet.setGenerationsInterval(interval);
             evolutionary.run(timeTableDataSet, endCondition, new EngineProgressInterface() {
                 @Override
@@ -56,18 +58,16 @@ public class RunEvolutionaryTask implements Runnable {
                     }
                 }
             });
-            finished = true;
-            running = false;
+            if(!pause) {
+                finished = true;
+                running = false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             finished = true;
             running = false;
         }
 
-    }
-
-    public void stopAlgo(){
-        evolutionary.stop();
     }
 
     public double getPercentage() {
@@ -88,5 +88,30 @@ public class RunEvolutionaryTask implements Runnable {
 
     public List<SolutionFitness<Lesson>> getBestSolution(){
         return evolutionary.getBestSolutions();
+    }
+
+    public EvolutionConfig getEvolutionConfig(){
+        return this.timeTableDataSet.getEvolutionConfig();
+    }
+
+    public synchronized void pause() {
+        if(!finished) {
+            pause = true;
+            evolutionary.stop();
+            running = false;
+        }
+    }
+
+    public void stop(){
+        if(!finished) {
+            pause = false;
+            evolutionary.stop();
+            running = false;
+            finished = true;
+        }
+    }
+
+    public boolean isPaused() {
+        return pause;
     }
 }

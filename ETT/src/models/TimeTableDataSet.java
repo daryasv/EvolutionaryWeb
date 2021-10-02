@@ -15,7 +15,7 @@ import java.util.*;
 public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable {
 
     final private TimeTableMembers timeTableMembers;
-    final private EvolutionConfig evolutionConfig;
+    private EvolutionConfig evolutionConfig;
     private int generations;
     private int generationsInterval;
 
@@ -336,5 +336,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
         return new ArrayList<>(getEvolutionConfig().getMutations());
     }
 
-
+    public void setEvolutionConfig(EvolutionConfig evolutionConfig){
+        this.evolutionConfig = evolutionConfig;
+    }
 }

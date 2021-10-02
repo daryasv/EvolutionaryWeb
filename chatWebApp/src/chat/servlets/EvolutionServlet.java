@@ -1,6 +1,7 @@
 package chat.servlets;
 
 import chat.constants.Constants;
+import chat.models.UserEvConfig;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
 import chatEngine.evolution.EvolutionManager;
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 import engine.models.Solution;
 import engine.models.SolutionFitness;
 import models.Lesson;
+import models.evolution.EvolutionConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,6 +39,7 @@ public class EvolutionServlet extends HttpServlet {
         Obviously the UI should be ready for such a case and handle it properly
          */
         int evolutionId = ServletUtils.getIntParameter(request, Constants.EVOLUTION_SETTINGS_ID);
+
 //        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
 //            return;
 //        }
@@ -76,6 +79,8 @@ public class EvolutionServlet extends HttpServlet {
         private boolean finished;
         private double percentage;
         private String solutionFitness;
+        private UserEvConfig evConfig;
+        private boolean paused;
 
         public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
             this.version = version;
@@ -89,7 +94,10 @@ public class EvolutionServlet extends HttpServlet {
                     RunEvolutionaryTask task = evolutionProblem.getEvolutionRuns().get(username);
                     this.running = task.isRunning();
                     this.finished = task.isFinished();
+                    this.paused = task.isPaused();
                     this.percentage = task.getPercentage();
+                    this.evConfig = new UserEvConfig(task.getEvolutionConfig());
+
                     if(this.finished) {
                         SolutionFitness<Lesson> solutionFitness = task.getGlobalSolution();
                         StringBuilder sb = new StringBuilder();
@@ -111,6 +119,8 @@ public class EvolutionServlet extends HttpServlet {
                         sb.append("</table>");
                         this.solutionFitness = sb.toString();
                     }
+                }else{
+                    this.evConfig = new UserEvConfig(evolutionProblem.getTimeTable().getEvolutionConfig());
                 }
             }else{
                 settings = "";

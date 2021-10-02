@@ -14,6 +14,10 @@ public class EvolutionConfig implements Serializable
     private Crossover crossover;
     private List<Mutation> mutations;
 
+    public EvolutionConfig(){
+
+    }
+
     public EvolutionConfig(ETTEvolutionEngine ettEvolutionEngine) throws ValidationException {
         setInitialPopulation(ettEvolutionEngine.getETTInitialPopulation());
         setCrossover(ettEvolutionEngine.getETTCrossover());

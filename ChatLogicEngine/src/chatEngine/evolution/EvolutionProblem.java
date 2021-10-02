@@ -21,7 +21,6 @@ public class EvolutionProblem {
     String name;
     String owner;
     TimeTableDataSet timeTable;
-    EvolutionConfig evolutionEngineDataSet;
     Map<String, RunEvolutionaryTask> evolutionRuns;
 
 
@@ -32,9 +31,6 @@ public class EvolutionProblem {
         this.name = name;
     }
 
-    public EvolutionConfig getEvolutionEngineDataSet() {
-        return this.evolutionEngineDataSet;
-    }
 
     public TimeTableDataSet getTimeTable() {
         return timeTable;
@@ -42,10 +38,6 @@ public class EvolutionProblem {
 
     public void setTimeTable(TimeTableDataSet timeTable) {
         this.timeTable = timeTable;
-    }
-
-    public void setEvolutionEngineDataSet(EvolutionConfig evolutionEngineDataSet) {
-        this.evolutionEngineDataSet = evolutionEngineDataSet;
     }
 
     public String getOwner() {
@@ -147,13 +139,14 @@ public class EvolutionProblem {
         return sbRules;
     }
 
-    public synchronized void runEvolution(String username) {
-//        if(this.evolutionRuns.containsKey(username)){
-//            return;
-//        }else{
-        RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,timeTable.getEvolutionConfig(),"Generations",1000,100);
-        new Thread(runEvolutionaryTask).start();
-        evolutionRuns.put(username,runEvolutionaryTask);
+    public synchronized void runEvolution(String username, EvolutionConfig evolutionConfig) {
+        if(this.evolutionRuns.containsKey(username)){
+            new Thread(evolutionRuns.get(username)).start();
+        }else {
+            RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,evolutionConfig, "Generations", 1000, 100);
+            new Thread(runEvolutionaryTask).start();
+            evolutionRuns.put(username, runEvolutionaryTask);
+        }
     }
 }
 

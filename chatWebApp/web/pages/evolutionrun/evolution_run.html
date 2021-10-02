@@ -16,17 +16,90 @@
     </div>
     <div class="row"><textarea readonly id="settings-text"></textarea></div>
 
-    <div class="row" id="evo-config">
-        <form id="run_evolution" method="POST">
-            <button id="run" type="submit">Run</button>
-        </form>
+    <form>
+        <div class="row form-row">
+            <div class="form-group col-md-4">
+                <label for="inputPopSize">Population Size</label>
+                <input type="number" class="form-control" id="inputPopSize" placeholder="Population size">
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col-md-4">
+                <label for="selectionInput">Selection type</label>
+                <select id="selectionInput" class="form-control">
+                    <option value="">Choose...</option>
+                    <option value="Truncation">Truncation</option>
+                    <option value="RouletteWheel">RouletteWheel</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="selectionPercentInput">Selection percentage</label>
+                <input disabled type="number" class="form-control" id="selectionPercentInput" placeholder="Selection percentage">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="elitismInput">Elitism Size</label>
+                <input type="number" class="form-control" id="elitismInput" placeholder="Elitism Size">
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col-md-4">
+                <label for="crossoverType">Crossover type</label>
+                <select id="crossoverType" class="form-control">
+                    <option >Choose...</option>
+                    <option value="DayTimeOriented">Day Time Oriented</option>
+                    <option value="AspectOriented">Aspect Oriented</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="cuttingPointsInput">Cutting points</label>
+                <input type="number" class="form-control" id="cuttingPointsInput" placeholder="Crossover cutting points">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="orientationInput">Orientation type</label>
+                <select disabled id="orientationInput" class="form-control">
+                    <option>Choose...</option>
+                    <option value="CLASS">Class</option>
+                    <option value="TEACHER">Teacher</option>
+                </select>
+            </div>
+        </div>
+        <div id="mutationsRows"></div>
+        <div class="row form-row">
+            <div class="form-group col-md-4">
+                <label for="endConditionSelect">End condition</label>
+                <select id="endConditionSelect" class="form-control">
+                    <option>Choose...</option>
+                    <option value="Generations">Generations</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Time">Time</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="limitInput" id="limitLabel">Limit</label>
+                <input type="number" disabled class="form-control" id="limitInput" placeholder="Limit">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="limitInput">Generations Interval</label>
+                <input type="number" class="form-control" id="intervalInput" placeholder="Interval">
+            </div>
+        </div>
+        <div class="row form-group">
+            <button id="run_evolution" class="btn btn-primary" type="submit">Start</button>
+            <button id="stop_evolution" disabled class="btn btn-secondary" type="submit">Stop</button>
+        </div>
+    </form>
+
+
+    <div class="row">
+        <label for="progress-bar">Progress</label>
+        <div class="row progress">
+            <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0"
+                 aria-valuemin="0" aria-valuemax="100"></div>
+            <span id="progress-text"></span>
+        </div>
     </div>
 
-    <div class="progress">
-        <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0"
-             aria-valuemin="0" aria-valuemax="100"></div>
-        <span id="progress-text"></span>
-    </div>
+
 
     <div class="row" id="solutionTable">
 
