@@ -24,10 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "EvolutionServlet", urlPatterns = {"/settings"})
 public class EvolutionServlet extends HttpServlet {
@@ -88,6 +85,8 @@ public class EvolutionServlet extends HttpServlet {
         private String solutionFitness;
         private String viewingOptions;
         private String RawSolution;
+        private String teacherIdsMenu;
+        private String classIdsMenu;
         private boolean isValidTable;
 
 
@@ -109,6 +108,8 @@ public class EvolutionServlet extends HttpServlet {
                         SolutionFitness<Lesson> solution = task.getGlobalSolution();
                         int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
                         int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
+                        Set<Integer> teacherIds =evolutionProblem.getTimeTable().getTimeTableMembers().getTeachers().keySet();
+                        Set<Integer> classIds =evolutionProblem.getTimeTable().getTimeTableMembers().getGrades().keySet();
                         TimeTableMembers solTimeTableDetails=evolutionProblem.getTimeTable().getTimeTableMembers();
                         //showRawSolution(solution, evolutionProblem.getTimeTable());
                        // showTable("Class",1,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
@@ -119,8 +120,36 @@ public class EvolutionServlet extends HttpServlet {
             }
         }
 
+        private void setTeacherIdsMenu(Set<Integer> teacherIds){
+            StringBuilder sb = new StringBuilder();
+            sb.append("<form action=\"/action_page.php\">");
+            sb.append("<label for=\"\">Choose an id:</label>");
+            sb.append("<select name=\"id\" id=\"TeacherId\">");
+            for (int id:teacherIds) {
+                sb.append(String.format("<option value=\"%d\">%d</option>", id, id));
+            }
+            sb.append("</select>");
+            sb.append("<br><br>");
+            sb.append("<input type=\"submit\" value=\"Submit\">");
+            sb.append("</form>");
+            this.teacherIdsMenu = sb.toString();
+        }
+
+        private void setClassIdsMenu(Set<Integer> classIds){
+            StringBuilder sb = new StringBuilder();
+            sb.append("<form action=\"/action_page.php\">");
+            sb.append("<label for=\"\">Choose an id:</label>");
+            sb.append("<select name=\"id\" id=\"ClassId\">");
+            for (int id:classIds) {
+                sb.append(String.format("<option value=\"%d\">%d</option>", id, id));
+            }
+            sb.append("</select>");
+            sb.append("<br><br>");
+            sb.append("<input type=\"submit\" value=\"Submit\">");
+            sb.append("</form>");
+            this.classIdsMenu = sb.toString();
+        }
         public void createHTMLScrollBar(StringBuilder sb){
-            sb.append("<head>");
             sb.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             sb.append("<style>");
             sb.append("::-webkit-scrollbar { width: 10px;}");
@@ -128,7 +157,6 @@ public class EvolutionServlet extends HttpServlet {
             sb.append("::-webkit-scrollbar-thumb { background: #888;}");
             sb.append("::-webkit-scrollbar-thumb:hover { background: #555; }");
             sb.append("</style>");
-            sb.append("</head>");
         }
         public void showRawSolution(SolutionFitness<Lesson> solutionF, TimeTableDataSet dataSet){
             Solution<Lesson> timeTableSolution = dataSet.sort(solutionF.getSolution(), LessonSortType.DayTimeOriented.toString(),null);
