@@ -86,7 +86,10 @@ public class EvolutionServlet extends HttpServlet {
         private boolean finished;
         private double percentage;
         private String solutionFitness;
+        private String viewingOptions;
+        private String RawSolution;
         private boolean isValidTable;
+
 
         public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
             this.version = version;
@@ -102,12 +105,13 @@ public class EvolutionServlet extends HttpServlet {
                     this.finished = task.isFinished();
                     this.percentage = task.getPercentage();
                     if(this.finished) {
+                        showViewingOptions();
                         SolutionFitness<Lesson> solution = task.getGlobalSolution();
                         int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
                         int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
                         TimeTableMembers solTimeTableDetails=evolutionProblem.getTimeTable().getTimeTableMembers();
                         //showRawSolution(solution, evolutionProblem.getTimeTable());
-                        showTable("Class",1,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
+                       // showTable("Class",1,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
                     }
                 }
             }else{
@@ -141,8 +145,7 @@ public class EvolutionServlet extends HttpServlet {
                 }
             }
             sb.append("</body>");
-            this.solutionFitness = sb.toString();
-
+           this.RawSolution = sb.toString();
         }
 
 
@@ -244,6 +247,20 @@ public class EvolutionServlet extends HttpServlet {
             page.append("</tr>");
         }
 
+        private void showViewingOptions(){
+            StringBuilder sb = new StringBuilder();
+            sb.append("<h2>view the best solution</h2>");
+            sb.append("<form action=\"/action_page.php\">");
+            sb.append("<p>please select an option :</p>");
+            sb.append("<input type=\"radio\" id=\"viewRaw\" name=\"fav_language\" value=\"HTML\">");
+            sb.append("<label for=\"html\">View as a row</label><br>");
+            sb.append("<input type=\"radio\" id=\"viewByTeacher\" name=\"fav_language\" value=\"CSS\">");
+            sb.append("<label for=\"css\">View teacher solution</label><br>");
+            sb.append("<input type=\"radio\" id=\"viewByClass\" name=\"fav_language\" value=\"JavaScript\">");
+            sb.append("<label for=\"javascript\">View class solution</label>");
+            sb.append("</form>");
+            this.viewingOptions= sb.toString();
+        }
         private void showRulesDetails(HashMap<IRule, Double> rulesFitness, StringBuilder page){
             page.append("<h2>Rules Details:</h2>");
             String ruleTypeLabel;
