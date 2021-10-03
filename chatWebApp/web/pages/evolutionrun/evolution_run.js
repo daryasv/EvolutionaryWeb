@@ -19,9 +19,11 @@ function loadPageData(evolutionData){
   const percentage = evolutionData.percentage || 0;
   $('#progress-bar').css('width',(percentage)+'%');
   $('#progress-text').text((percentage) + '%');
+  $('#viewingOptions').html(evolutionData.viewingOptions);
   if(evolutionData.solutionFitness){
-    $('#solutionTable').html(evolutionData.solutionFitness) ;
+    $('#solutionTable').html(evolutionData.solutionFitness);
   }
+
 }
 
 function getPageData(){
@@ -57,6 +59,9 @@ $(function() { // onload...do
         alert("Success");
       }
     });
+
+
+
 
     // $("#input_file").val("");
     // by default - we'll always return false so it doesn't redirect the user.
