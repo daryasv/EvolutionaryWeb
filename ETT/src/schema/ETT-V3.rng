@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    <start>
+        <element name="xs:schema">
+            <oneOrMore>
+                <ref name="element"/>
+            </oneOrMore>
+        </element>
+    </start>
+    <define name="element">
+        <element name="xs:element">
+            <optional>
+                <attribute name="maxOccurs">
+                    <data type="NCName"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="minOccurs">
+                    <data type="integer"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="name">
+                    <data type="NCName"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="ref">
+                    <data type="NCName"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="type">
+                    <data type="NMTOKEN"/>
+                </attribute>
+            </optional>
+            <optional>
+                <choice>
+                    <ref name="simpleType"/>
+                    <element name="xs:complexType">
+                        <optional>
+                            <choice>
+                                <element name="xs:all">
+                                    <oneOrMore>
+                                        <ref name="element"/>
+                                    </oneOrMore>
+                                </element>
+                                <element name="xs:sequence">
+                                    <oneOrMore>
+                                        <ref name="element"/>
+                                    </oneOrMore>
+                                </element>
+                            </choice>
+                        </optional>
+                        <zeroOrMore>
+                            <element name="xs:attribute">
+                                <attribute name="name">
+                                    <data type="NCName"/>
+                                </attribute>
+                                <optional>
+                                    <attribute name="type">
+                                        <data type="NMTOKEN"/>
+                                    </attribute>
+                                </optional>
+                                <attribute name="use">
+                                    <data type="NCName"/>
+                                </attribute>
+                                <optional>
+                                    <ref name="simpleType"/>
+                                </optional>
+                            </element>
+                        </zeroOrMore>
+                    </element>
+                </choice>
+            </optional>
+        </element>
+    </define>
+    <define name="simpleType">
+        <element name="xs:simpleType">
+            <element name="xs:restriction">
+                <attribute name="base">
+                    <data type="NMTOKEN"/>
+                </attribute>
+                <oneOrMore>
+                    <element name="xs:enumeration">
+                        <attribute name="value">
+                            <data type="NCName"/>
+                        </attribute>
+                    </element>
+                </oneOrMore>
+            </element>
+        </element>
+    </define>
+</grammar>

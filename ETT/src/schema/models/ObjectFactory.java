@@ -52,54 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ETTEvolutionEngine }
-     * 
-     */
-    public ETTEvolutionEngine createETTEvolutionEngine() {
-        return new ETTEvolutionEngine();
-    }
-
-    /**
-     * Create an instance of {@link ETTInitialPopulation }
-     * 
-     */
-    public ETTInitialPopulation createETTInitialPopulation() {
-        return new ETTInitialPopulation();
-    }
-
-    /**
-     * Create an instance of {@link ETTSelection }
-     * 
-     */
-    public ETTSelection createETTSelection() {
-        return new ETTSelection();
-    }
-
-    /**
-     * Create an instance of {@link ETTCrossover }
-     * 
-     */
-    public ETTCrossover createETTCrossover() {
-        return new ETTCrossover();
-    }
-
-    /**
-     * Create an instance of {@link ETTMutations }
-     * 
-     */
-    public ETTMutations createETTMutations() {
-        return new ETTMutations();
-    }
-
-    /**
-     * Create an instance of {@link ETTMutation }
-     * 
-     */
-    public ETTMutation createETTMutation() {
-        return new ETTMutation();
-    }
-
-    /**
      * Create an instance of {@link ETTSubjects }
      * 
      */

@@ -1,7 +1,12 @@
 
 package schema.models;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -16,6 +21,7 @@ import javax.xml.bind.annotation.*;
  *       &lt;all>
  *         &lt;element ref="{}ETT-Name"/>
  *         &lt;element ref="{}ETT-Teaching"/>
+ *         &lt;element name="ETT-Working-Hours" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/all>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
@@ -36,6 +42,8 @@ public class ETTTeacher {
     protected String ettName;
     @XmlElement(name = "ETT-Teaching", required = true)
     protected ETTTeaching ettTeaching;
+    @XmlElement(name = "ETT-Working-Hours")
+    protected int ettWorkingHours;
     @XmlAttribute(name = "id", required = true)
     protected int id;
 
@@ -85,6 +93,22 @@ public class ETTTeacher {
      */
     public void setETTTeaching(ETTTeaching value) {
         this.ettTeaching = value;
+    }
+
+    /**
+     * Gets the value of the ettWorkingHours property.
+     * 
+     */
+    public int getETTWorkingHours() {
+        return ettWorkingHours;
+    }
+
+    /**
+     * Sets the value of the ettWorkingHours property.
+     * 
+     */
+    public void setETTWorkingHours(int value) {
+        this.ettWorkingHours = value;
     }
 
     /**

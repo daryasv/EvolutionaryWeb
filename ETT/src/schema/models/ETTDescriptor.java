@@ -1,7 +1,11 @@
 
 package schema.models;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -15,7 +19,6 @@ import javax.xml.bind.annotation.*;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}ETT-TimeTable"/>
- *         &lt;element ref="{}ETT-EvolutionEngine"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -26,16 +29,13 @@ import javax.xml.bind.annotation.*;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "ettTimeTable",
-    "ettEvolutionEngine"
+    "ettTimeTable"
 })
 @XmlRootElement(name = "ETT-Descriptor")
 public class ETTDescriptor {
 
     @XmlElement(name = "ETT-TimeTable", required = true)
     protected ETTTimeTable ettTimeTable;
-    @XmlElement(name = "ETT-EvolutionEngine", required = true)
-    protected ETTEvolutionEngine ettEvolutionEngine;
 
     /**
      * Gets the value of the ettTimeTable property.
@@ -59,30 +59,6 @@ public class ETTDescriptor {
      */
     public void setETTTimeTable(ETTTimeTable value) {
         this.ettTimeTable = value;
-    }
-
-    /**
-     * Gets the value of the ettEvolutionEngine property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ETTEvolutionEngine }
-     *     
-     */
-    public ETTEvolutionEngine getETTEvolutionEngine() {
-        return ettEvolutionEngine;
-    }
-
-    /**
-     * Sets the value of the ettEvolutionEngine property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ETTEvolutionEngine }
-     *     
-     */
-    public void setETTEvolutionEngine(ETTEvolutionEngine value) {
-        this.ettEvolutionEngine = value;
     }
 
 }
