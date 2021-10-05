@@ -10,4 +10,6 @@ public class Constants {
     public static final int INT_PARAMETER_ERROR = Integer.MIN_VALUE;
     public static final String EVOLUTION_SETTINGS_ID = "evoId";
     public static final String SETTINGS_VERSION_PARAM = "settingsversion";
+    public static final String EVOLUTION_PAUSE = "evoPause";
+    public static final String EVOLUTION_STOP = "evoStop";
 }

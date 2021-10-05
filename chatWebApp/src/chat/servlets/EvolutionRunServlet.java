@@ -1,11 +1,12 @@
 package chat.servlets;
 
 import chat.constants.Constants;
+import chat.models.UserEvConfig;
 import chat.utils.ServletUtils;
 import chat.utils.SessionUtils;
 import chatEngine.evolution.EvolutionManager;
 import chatEngine.evolution.EvolutionProblem;
-import com.google.gson.Gson;
+import exception.ValidationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,23 +32,29 @@ public class EvolutionRunServlet extends HttpServlet {
         Obviously the UI should be ready for such a case and handle it properly
          */
         int evolutionId = ServletUtils.getIntParameter(request, Constants.EVOLUTION_SETTINGS_ID);
-//        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
-//            return;
-//        }
-
-        /*
-        Synchronizing as minimum as I can to fetch only the relevant information from the chat manager and then only processing and sending this information onward
-        Note that the synchronization here is on the ServletContext, and the one that also synchronized on it is the chat servlet when adding new chat lines.
-         */
+        boolean pause = ServletUtils.getBooleanParameter(request, Constants.EVOLUTION_PAUSE);
+        boolean stop = ServletUtils.getBooleanParameter(request, Constants.EVOLUTION_STOP);
 
 
-        synchronized (getServletContext()) {
-            evolutionManager.runEvolution(evolutionId,username);
-        }
+        try {
+            UserEvConfig evConfig = new UserEvConfig(request);
 
-        try(PrintWriter out = response.getWriter()){
-            out.println("success");
-            out.flush();
+            synchronized (getServletContext()) {
+                if (stop) {
+                    evolutionManager.stopEvolution(evolutionId, username);
+                } else if (pause) {
+                    evolutionManager.pauseEvolution(evolutionId, username);
+                } else {
+                    evolutionManager.runEvolution(evolutionId, username, evConfig.getEvolutionConfig());
+                }
+            }
+
+            try (PrintWriter out = response.getWriter()) {
+                out.println("success");
+                out.flush();
+            }
+        } catch (ValidationException e) {
+            ServletUtils.setError(e.getMessage(),response);
         }
     }
 

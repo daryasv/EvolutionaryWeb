@@ -1,6 +1,7 @@
 package chatEngine.evolution;
 
 import models.TimeTableDataSet;
+import models.evolution.EvolutionConfig;
 import schema.models.ETTTimeTable;
 
 import java.util.*;
@@ -28,11 +29,19 @@ public class EvolutionManager {
         return Collections.unmodifiableMap(evolutionProblemsMap);
     }
 
-    public synchronized void runEvolution(int id,String username){
-        evolutionProblemsMap.get(id).runEvolution(username);
+    public synchronized void runEvolution(int id, String username, EvolutionConfig evolutionConfig) {
+        evolutionProblemsMap.get(id).runEvolution(username, evolutionConfig);
     }
 
     public synchronized int getVersion() {
         return lastProblemId;
+    }
+
+    public synchronized void pauseEvolution(int id, String username) {
+        evolutionProblemsMap.get(id).getEvolutionRuns().get(username).pause();
+    }
+
+    public synchronized void stopEvolution(int id, String username) {
+        evolutionProblemsMap.get(id).getEvolutionRuns().get(username).stop();
     }
 }

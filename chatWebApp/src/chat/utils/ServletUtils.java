@@ -6,6 +6,9 @@ import chatEngine.users.UserManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import static chat.constants.Constants.INT_PARAMETER_ERROR;
 
@@ -63,4 +66,22 @@ public class ServletUtils {
 	}
 
 
+	public static boolean getBooleanParameter(HttpServletRequest request, String name) {
+		String value = request.getParameter(name);
+		if (value != null) {
+			return Boolean.parseBoolean(value);
+		}
+		return false;
+	}
+
+	public static void setError(String text, HttpServletResponse res) {
+		res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		res.setContentType("text/plain");
+		try {
+			res.getWriter().println(text);
+			res.getWriter().flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

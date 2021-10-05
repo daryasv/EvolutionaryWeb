@@ -94,18 +94,7 @@ public class EvolutionSettingsServlet extends HttpServlet {
                 out.flush();
             }
         } catch (ValidationException e) {
-            setError(e.getMessage(),response);
-        }
-    }
-
-    private void setError(String text,HttpServletResponse res) {
-        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        res.setContentType("text/plain");
-        try {
-            res.getWriter().println(text);
-            res.getWriter().flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+            ServletUtils.setError(e.getMessage(),response);
         }
     }
 
