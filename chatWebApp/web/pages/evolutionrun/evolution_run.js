@@ -60,11 +60,15 @@ function loadPageData(evolutionData,all){
     }
   }
   const percentage = evolutionData.percentage || 0;
+
   $('#progress-bar').css('width', (percentage) + '%');
   $('#progress-text').text((percentage.toFixed(2)) + '%');
+  $('#viewingOptions').html(evolutionData.viewingOptions);
+
   if(evolutionData.solutionFitness){
-    $('#solutionTable').html(evolutionData.solutionFitness) ;
+    $('#solutionTable').html(evolutionData.solutionFitness);
   }
+
   var changed = false;
   if(evolutionData.paused !== paused){
     paused = !paused;
