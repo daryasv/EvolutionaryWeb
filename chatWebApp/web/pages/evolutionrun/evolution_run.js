@@ -230,4 +230,35 @@ $(function() { // onload...do
     $('#stop_evolution').attr("disabled",true);
     return false;
   });
+
+  $("#show_solution").on("click",function(e) {
+    var url = SHOW_SOLUTION_URL;
+    e.preventDefault();
+    var type =  $('#viewOptionSelect').val();
+    var objectId;
+    if(type === "teacher" || type === "class"){
+      objectId = $('#tableObjectId').val();
+    }
+
+    $.ajax({
+      data: {
+        evoId: id,
+        type: type,
+        objectId: objectId
+      },
+      url: url,
+      // timeout: 10000,
+      method: "POST",
+      error: function(error) {
+        console.error("Failed to submit");
+        alert(error.responseText || "Something went wrong. Check the details and try again")
+      },
+      success: function(response) {
+        //todo: insert table by response
+        //$('#solutionTable').html();
+      }
+    });
+
+    return false;
+  });
 });
