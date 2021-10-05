@@ -100,7 +100,23 @@
     </div>
 
 
-    <div class="row" id="viewingOptions">
+    <div class="row hidden" id="viewingOptions">
+        <h2>view the best solution</h2>
+        <div class="row form-row">
+            <div class="form-group col-md-4">
+                <label for="viewOptionSelect">Viewing option</label>
+                <select id="viewOptionSelect" class="form-control">
+                    <option>Choose...</option>
+                    <option value="raw">By raw</option>
+                    <option value="teacher">By teacher</option>
+                    <option value="class">By class</option>
+                </select>
+            </div>
+            <div id="tableIdContainer" class="hidden">
+                <label for="tableObjectId" id="objectIdLabel"></label>
+                <input type="number" class="form-control" id="tableObjectId" placeholder="Id">
+            </div>
+        </div>
     </div>
     <div class="row" id="solutionTable">
     </div>

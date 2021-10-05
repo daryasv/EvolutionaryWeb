@@ -65,16 +65,15 @@ function loadPageData(evolutionData,all){
   $('#progress-bar').css('width', (percentage) + '%');
   $('#progress-text').text((percentage.toFixed(2)) + '%');
 
-  if(enableViewOptions !== !!evolutionData.viewingOptions) {
+  if(enableViewOptions !== evolutionData.viewingOptions) {
     enableViewOptions = !enableViewOptions;
     if(enableViewOptions) {
-      $('#viewingOptions').html(evolutionData.viewingOptions);
-
+      $('#viewingOptions').attr("class","row");
       if (evolutionData.solutionFitness) {
         $('#solutionTable').html(evolutionData.solutionFitness);
       }
     }else{
-      $('#viewingOptions').html("");
+      $('#viewingOptions').attr("class","hidden");
       $('#solutionTable').html("");
     }
   }
@@ -124,6 +123,16 @@ function initElements(){
     var val = $(e.target).val();
     $('#limitInput').attr("disabled",!val || val === "Choose...");
     $('#limitLabel').text(val ==="Time" ? "Limit (Seconds)" : "Limit");
+  });
+
+  $('#viewOptionSelect').on('change',function (e){
+    var val = $(e.target).val();
+    if(val === "teacher" || val === "class"){
+      $('#tableIdContainer').attr("class","form-group col-md-4");
+      $('#objectIdLabel').text(val==="teacher" ? "Teacher id" : "Class id");
+    }else{
+      $('#tableIdContainer').attr("class","hidden");
+    }
   });
 }
 

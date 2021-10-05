@@ -17,3 +17,7 @@ body{
     margin-left: 10px;
     margin-top: 5px;
 }
+
+.hidden{
+    display: none;
+}

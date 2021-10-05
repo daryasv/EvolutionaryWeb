@@ -93,7 +93,7 @@ public class EvolutionServlet extends HttpServlet {
         private String solutionFitness;
         private UserEvConfig evConfig;
         private boolean paused;
-        private String viewingOptions;
+        private Boolean viewingOptions;
         private String RawSolution;
         private boolean isValidTable;
 
@@ -101,6 +101,7 @@ public class EvolutionServlet extends HttpServlet {
             this.version = version;
             running = false;
             finished = false;
+            viewingOptions = false;
             percentage = 0;
             if(evolutionProblem!=null && evolutionProblem.getTimeTable() !=null) {
                 this.settings = evolutionProblem.getTimeTableSettings();
@@ -114,7 +115,7 @@ public class EvolutionServlet extends HttpServlet {
                     this.evConfig = new UserEvConfig(task.getEvolutionConfig());
 
                     if(this.finished) {
-                        showViewingOptions();
+                        viewingOptions = true;
                         SolutionFitness<Lesson> solution = task.getGlobalSolution();
                         int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
                         int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
@@ -258,20 +259,6 @@ public class EvolutionServlet extends HttpServlet {
             page.append("</tr>");
         }
 
-        private void showViewingOptions(){
-            StringBuilder sb = new StringBuilder();
-            sb.append("<h2>view the best solution</h2>");
-            sb.append("<form action=\"/action_page.php\">");
-            sb.append("<p>please select an option :</p>");
-            sb.append("<input type=\"radio\" id=\"viewRaw\" name=\"fav_language\" value=\"HTML\">");
-            sb.append("<label for=\"html\">View as a row</label><br>");
-            sb.append("<input type=\"radio\" id=\"viewByTeacher\" name=\"fav_language\" value=\"CSS\">");
-            sb.append("<label for=\"css\">View teacher solution</label><br>");
-            sb.append("<input type=\"radio\" id=\"viewByClass\" name=\"fav_language\" value=\"JavaScript\">");
-            sb.append("<label for=\"javascript\">View class solution</label>");
-            sb.append("</form>");
-            this.viewingOptions= sb.toString();
-        }
         private void showRulesDetails(HashMap<IRule, Double> rulesFitness, StringBuilder page){
             page.append("<h2>Rules Details:</h2>");
             String ruleTypeLabel;
