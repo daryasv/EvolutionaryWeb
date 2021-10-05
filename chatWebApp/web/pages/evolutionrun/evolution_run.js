@@ -10,6 +10,7 @@ var id = getId();
 var running = false;
 var paused = false;
 var mutationsCount = 0;
+var enableViewOptions = false;
 
 function back(){
   location.href = "../chatroom/chatroom.html";
@@ -63,10 +64,19 @@ function loadPageData(evolutionData,all){
 
   $('#progress-bar').css('width', (percentage) + '%');
   $('#progress-text').text((percentage.toFixed(2)) + '%');
-  $('#viewingOptions').html(evolutionData.viewingOptions);
 
-  if(evolutionData.solutionFitness){
-    $('#solutionTable').html(evolutionData.solutionFitness);
+  if(enableViewOptions !== !!evolutionData.viewingOptions) {
+    enableViewOptions = !enableViewOptions;
+    if(enableViewOptions) {
+      $('#viewingOptions').html(evolutionData.viewingOptions);
+
+      if (evolutionData.solutionFitness) {
+        $('#solutionTable').html(evolutionData.solutionFitness);
+      }
+    }else{
+      $('#viewingOptions').html("");
+      $('#solutionTable').html("");
+    }
   }
 
   var changed = false;
