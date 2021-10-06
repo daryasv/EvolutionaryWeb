@@ -1,5 +1,4 @@
 package models;
-
 import engine.models.*;
 import exception.ValidationException;
 import models.evolution.CrossoverConfigurationType;
@@ -217,7 +216,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                 for (Lesson lesson : lessons) {
                     if (lesson.getSubjectId() != -1) {
                         Teacher teacher = timeTableMembers.getTeachers().get(lesson.getTeacherId());
-                        if (teacher!=null) {
+                        if (teacher != null) {
                             if (!teacher.getSubjectsIdsList().contains(lesson.getSubjectId())) {
                                 fails++;
                             }
@@ -271,7 +270,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                         }
 
                         //check on actual if there is subjects that not relevant to the class
-                        for(Integer subjectId: hoursByClass.get(gradeId).keySet()) {
+                        for (Integer subjectId : hoursByClass.get(gradeId).keySet()) {
                             if (!grade.getRequirements().containsKey(subjectId)) {
                                 fails++;
                                 totalSubjectsExpect++;
@@ -283,6 +282,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                     totalSubjectsExpect += grade.getRequirements().size();
                 }
                 return (1 - (fails / totalSubjectsExpect)) * 100;
+
             case DayOffTeacher:
                 List<Integer> days = new ArrayList<>();
                 HashMap<Integer, List<Integer>> teacherDays = new HashMap<>();
@@ -306,7 +306,35 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                     }
                 }
                 return (1 - (fails / teacherDays.keySet().size())) * 100;
+
             case Sequentiality:
+
+            case DayOffClass:
+
+                List<Integer> days2 = new ArrayList<>();
+                HashMap<Integer, List<Integer>> classDays = new HashMap<>();
+                for (Lesson l : lessons) {
+                    int id = l.getClassId();
+                    int day = l.getDay();
+                    if (!days2.contains(day)) {
+                        days2.add(day);
+                    }
+                    if (!classDays.containsKey(l.getClassId())) {
+                        classDays.put(id,new ArrayList<>());
+                    }
+                    if (!classDays.get(id).contains(day)) {
+                        classDays.get(id).add(day);
+                    }
+                }
+                int totalDays2 = days2.size();
+                for (int key: classDays.keySet()) {
+                    if(classDays.get(key).size() == totalDays2){
+                        fails++;
+                    }
+                }
+                return (1 - (fails / classDays.keySet().size())) * 100;
+
+            case WorkingHoursPreference:
 
                 break;
             default:

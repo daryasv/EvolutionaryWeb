@@ -6,7 +6,9 @@ public enum RuleId {
     Knowledgeable("Knowledgeable"),
     Satisfactory("Satisfactory"),
     Sequentiality("Sequentiality"),
-    DayOffTeacher("DayOffTeacher");
+    DayOffTeacher("DayOffTeacher"),
+    DayOffClass("DayOffClass"),
+    WorkingHoursPreference("WorkingHoursPreference");
 
     public String name;
     RuleId(String name) {
