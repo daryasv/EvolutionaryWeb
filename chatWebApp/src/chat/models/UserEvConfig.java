@@ -102,7 +102,7 @@ public class UserEvConfig {
             }
             this.mutations = mutations;
         }catch (Exception e){
-
+            throw new ValidationException("Invalid mutations");
         }
     }
 
