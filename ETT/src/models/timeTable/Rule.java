@@ -11,11 +11,12 @@ public class Rule implements IRule, Serializable {
     protected RuleId id;
     protected String configuration;
     protected RuleType type;
+    protected String parameter;
 
     public Rule(ETTRule ettRule) throws ValidationException {
-      setId(ettRule.getETTRuleId());
-      setConfiguration(ettRule.getETTConfiguration());
-      setRuleType(ettRule.getType());
+        setId(ettRule.getETTRuleId());
+        setConfiguration(ettRule.getETTConfiguration());
+        setRuleType(ettRule.getType());
     }
 
     @Override
@@ -27,6 +28,7 @@ public class Rule implements IRule, Serializable {
     public String getName() {
         return this.id.toString();
     }
+
 
     public RuleId getId() {
         return id;
@@ -44,6 +46,7 @@ public class Rule implements IRule, Serializable {
         setId(ruleId);
     }
 
+    @Override
     public String getConfiguration() {
         return configuration;
     }
@@ -67,5 +70,6 @@ public class Rule implements IRule, Serializable {
         RuleType type = RuleType.valueOfLabel(ruleType);
         setType(type);
     }
+
 }
 

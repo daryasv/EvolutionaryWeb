@@ -4,5 +4,6 @@ public interface IRule {
 
     boolean isHard();
     String getName();
+    String getConfiguration();
 
 }

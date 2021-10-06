@@ -308,7 +308,37 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                 return (1 - (fails / teacherDays.keySet().size())) * 100;
 
             case Sequentiality:
-
+            {
+                int maxHours = Integer.parseInt(rule.getConfiguration().split("=")[1]);
+                int classSubjects = 0;
+                HashMap<Integer, Map.Entry<Integer, Integer>> lastSubjectByClass = new HashMap<>();
+                int day = 0;
+                for (Lesson l : lessons) {
+                    if (day != l.getDay()) {
+                        for (Integer subjectId : lastSubjectByClass.keySet()) {
+                            if (subjectId != -1 && lastSubjectByClass.get(subjectId).getValue() > maxHours) {
+                                fails++;
+                            }
+                            classSubjects++;
+                        }
+                        lastSubjectByClass = new HashMap<>();
+                    }
+                    int hours = 1;
+                    if (lastSubjectByClass.containsKey(l.getClassId())) {
+                        if (lastSubjectByClass.get(l.getClassId()).getKey() == l.getSubjectId()) {
+                            hours += lastSubjectByClass.get(l.getClassId()).getValue();
+                        } else {
+                            if (lastSubjectByClass.get(l.getClassId()).getKey() != -1 &&
+                                    lastSubjectByClass.get(l.getClassId()).getValue() > maxHours) {
+                                fails++;
+                            }
+                            classSubjects++;
+                        }
+                    }
+                    lastSubjectByClass.put(l.getClassId(), new AbstractMap.SimpleEntry<>(l.getSubjectId(), hours));
+                }
+                return (1 - (fails / classSubjects)) * 100;
+            }
             case DayOffClass:
 
                 List<Integer> days2 = new ArrayList<>();
