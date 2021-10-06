@@ -80,6 +80,9 @@ public class TimeTableMembers implements Serializable
                     throw new ValidationException("Teacher subject id not in subjects");
                 }
             }
+            if(teacher.getWorkingHoursPreference() > (this.days * this.hours)){
+                throw new ValidationException("Teacher working hours more than DH");
+            }
             this.teachers.put(teacher.getId(), teacher);
         }
 
