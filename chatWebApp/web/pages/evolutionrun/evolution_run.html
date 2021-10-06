@@ -16,7 +16,7 @@
     </div>
     <div class="row"><textarea readonly id="settings-text"></textarea></div>
 
-    <form>
+    <div>
         <div class="row form-row">
             <div class="form-group col-md-4">
                 <label for="inputPopSize">Population Size</label>
@@ -63,7 +63,13 @@
                 </select>
             </div>
         </div>
-        <div id="mutationsRows"></div>
+        <div class="row">
+            <div>
+                <label>Mutations:</label>
+            </div>
+            <button id="addMutationBtn" class="btn btn-primary">Add mutation</button>
+            <div id="mutationsRows"></div>
+        </div>
         <div class="row form-row">
             <div class="form-group col-md-4">
                 <label for="endConditionSelect">End condition</label>
@@ -87,8 +93,12 @@
             <button id="run_evolution" class="btn btn-primary" type="submit">Start</button>
             <button id="stop_evolution" disabled class="btn btn-secondary" type="submit">Stop</button>
         </div>
-    </form>
+    </div>
 
+    <div class="row">
+        <label class="col-md-2">Current generation: <span id="currentGen">0</span></label>
+        <label class="col-md-2">Best fitness: <span id="bestFitness">0</span></label>
+    </div>
 
     <div class="row">
         <label for="progress-bar">Progress</label>

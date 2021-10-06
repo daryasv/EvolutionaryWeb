@@ -18,6 +18,47 @@ function back(){
   location.href = "../chatroom/chatroom.html";
 }
 
+function printMutations(mutations) {
+  var mutationsHtml ="";
+  for(var i =0; i<mutations.length ;i++) {
+    var mutation = mutations[i];
+
+    mutationsHtml += ("<div id='mutationRow"+(i)+"'  class=\"row form-row\">\n" +
+        "            <div class=\"form-group col-md-3\">\n" +
+        "                <label for=\"mutationType"+i+"\">Mutation type</label>\n" +
+        "                <select id='mutationType"+(i)+"'  class=\"form-control\">\n" +
+        "                    <option value=''>Choose...</option>\n" +
+        "                    <option value=\"Flipping\">Flipping</option>\n" +
+        "                    <option value=\"Sizer\">Sizer</option>\n" +
+        "                </select>\n" +
+        "            </div>\n" +
+        "            <div class=\"form-group col-md-3\">\n" +
+        "                <label for=\"probability"+i+"\">Probability (1-100)</label>\n" +
+        "                <input type=\"number\" value="+(mutation.probability)+" class=\"form-control\" id=\"probability"+i+"\" placeholder=\"Probability\">\n" +
+        "            </div>\n" +
+        "            <div class=\"form-group col-md-3\">\n" +
+        "                <label for=\"tupples"+i+"\">Max Tupples</label>\n" +
+        "                <input type=\"number\" value="+(mutation.maxTupples)+" class=\"form-control\" id=\"tupples"+i+"\" placeholder=\"Tupples\">\n" +
+        "            </div>\n" +
+        "            <div class=\"form-group col-md-1\">\n" +
+        "                <label for=\"component"+i+"\">Component</label>\n" +
+        "                <select id=\"component"+i+"\" class=\"form-control\" value="+(mutation.component)+">\n" +
+        "                    <option "+(mutation.component === "D" ? "selected" : "")+" value=\"D\">D</option>\n" +
+        "                    <option "+(mutation.component === "H"? "selected" : "")+" value=\"H\">H</option>\n" +
+        "                    <option "+(mutation.component === "T"? "selected" : "")+" value=\"T\">T</option>\n" +
+        "                    <option "+(mutation.component === "C"? "selected" : "")+" value=\"C\">C</option>\n" +
+        "                    <option "+(mutation.component === "S"? "selected" : "")+" value=\"S\">S</option>\n" +
+        "                </select>\n" +
+        "            </div>\n" +
+        "            <div class=\"form-group col-md-2\">\n" +
+        "               <button id='mutationBtn"+(i)+"' onclick='removeMutation("+(i)+")' class=\"btn btn-danger\">Remove</button>" +
+        "            </div>\n" +
+        "        </div>");
+  }
+  $('#mutationsRows').html(mutationsHtml);
+
+}
+
 function loadPageData(evolutionData,all){
   if(all) {
     $('#settings-text').val(evolutionData.settings);
@@ -29,38 +70,15 @@ function loadPageData(evolutionData,all){
       $('#crossoverType').val(evolutionData.evConfig.crossoverType).change();
       $('#cuttingPointsInput').val(evolutionData.evConfig.cuttingPoints);
       $('#orientationInput').val(evolutionData.evConfig.orientationType).change();
-      var mutationsHtml = "";
-      mutationsCount = evolutionData.evConfig.mutations.length;
-      for(var i =0; i<evolutionData.evConfig.mutations.length ;i++) {
-        var mutation = evolutionData.evConfig.mutations[i];
-
-        mutationsHtml += ("<div class=\"row form-row\">\n" +
-            "            <div class=\"form-group col-md-3\">\n" +
-            "                <label for=\"mutationType"+i+"\">Mutation type</label>\n" +
-            "                <input class=\"form-control\" id='mutationType"+(i)+"' value="+(mutation.name)+" disabled/>\n" +
-            "            </div>\n" +
-            "            <div class=\"form-group col-md-3\">\n" +
-            "                <label for=\"probability"+i+"\">Probability</label>\n" +
-            "                <input type=\"number\" value="+(mutation.probability)+" class=\"form-control\" id=\"probability"+i+"\" placeholder=\"Probability\">\n" +
-            "            </div>\n" +
-            "            <div class=\"form-group col-md-3\">\n" +
-            "                <label for=\"tupples"+i+"\">Max Tupples</label>\n" +
-            "                <input type=\"number\" value="+(mutation.maxTupples)+" class=\"form-control\" id=\"tupples"+i+"\" placeholder=\"Tupples\">\n" +
-            "            </div>\n" +
-            "            <div class=\"form-group col-md-3\">\n" +
-            "                <label for=\"component"+i+"\">Component</label>\n" +
-            "                <select id=\"component"+i+"\" class=\"form-control\" value="+(mutation.component)+">\n" +
-            "                    <option "+(mutation.component === "D" ? "selected" : "")+" value=\"D\">D</option>\n" +
-            "                    <option "+(mutation.component === "H"? "selected" : "")+" value=\"H\">H</option>\n" +
-            "                    <option "+(mutation.component === "T"? "selected" : "")+" value=\"T\">T</option>\n" +
-            "                    <option "+(mutation.component === "C"? "selected" : "")+" value=\"C\">C</option>\n" +
-            "                    <option "+(mutation.component === "S"? "selected" : "")+" value=\"S\">S</option>\n" +
-            "                </select>\n" +
-            "            </div>\n" +
-            "        </div>");
+      if(evolutionData.evConfig.mutations) {
+        mutationsCount =  evolutionData.evConfig.mutations.length;
+        printMutations(evolutionData.evConfig.mutations);
+      }else{
+        mutationsCount = 0;
       }
-      $('#mutationsRows').html(mutationsHtml);
     }
+    $('#currentGen').text(evolutionData.currentGeneration || 0);
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2)+"%");
   }
   const percentage = evolutionData.percentage || 0;
 
@@ -98,6 +116,10 @@ function loadPageData(evolutionData,all){
       $('#stop_evolution').attr("class",paused? "btn btn-danger": "btn btn-secondary").attr("disabled",!paused);
     }
   }
+  if(running){
+    $('#currentGen').text(evolutionData.currentGeneration || 0);
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2) + "%");
+  }
 }
 
 function getPageData(all){
@@ -110,33 +132,34 @@ function getPageData(all){
   });
 }
 
-function initElements(){
+function initElements() {
 
   $('#ev_id').text(id);
-  $('#crossoverType').on('change',  function (e) {
+  $('#crossoverType').on('change', function (e) {
     var val = $(e.target).val();
-    $('#orientationInput').attr("disabled",val !== "AspectOriented");
+    $('#orientationInput').attr("disabled", val !== "AspectOriented");
   });
-  $('#selectionInput').on('change',  function (e) {
+  $('#selectionInput').on('change', function (e) {
     var val = $(e.target).val();
-    $('#selectionPercentInput').attr("disabled",val !== "Truncation");
-  });
-
-  $('#endConditionSelect').on('change',function (e){
-    var val = $(e.target).val();
-    $('#limitInput').attr("disabled",!val || val === "Choose...");
-    $('#limitLabel').text(val ==="Time" ? "Limit (Seconds)" : "Limit");
+    $('#selectionPercentInput').attr("disabled", val !== "Truncation");
   });
 
-  $('#viewOptionSelect').on('change',function (e){
+  $('#endConditionSelect').on('change', function (e) {
     var val = $(e.target).val();
-    if(val === "teacher" || val === "class"){
-      $('#tableIdContainer').attr("class","form-group col-md-4");
-      $('#objectIdLabel').text(val==="teacher" ? "Teacher id" : "Class id");
-    }else{
-      $('#tableIdContainer').attr("class","hidden");
+    $('#limitInput').attr("disabled", !val || val === "Choose...");
+    $('#limitLabel').text(val === "Time" ? "Limit (Seconds)" : "Limit");
+  });
+
+  $('#viewOptionSelect').on('change', function (e) {
+    var val = $(e.target).val();
+    if (val === "teacher" || val === "class") {
+      $('#tableIdContainer').attr("class", "form-group col-md-4");
+      $('#objectIdLabel').text(val === "teacher" ? "Teacher id" : "Class id");
+    } else {
+      $('#tableIdContainer').attr("class", "hidden");
     }
   });
+  $('#addMutationBtn').on('click', (e) => addMutation(e));
 }
 
 function getRunConfig() {
@@ -272,3 +295,63 @@ $(function() { // onload...do
 
   });
 });
+
+function addMutation(){
+  var i = mutationsCount;
+  var mutationHtml = ("<div id='mutationRow"+(i)+"' class=\"row form-row\">\n" +
+      "            <div class=\"form-group col-md-3\">\n" +
+      "                <label for=\"mutationType"+i+"\">Mutation type</label>\n" +
+      "                <select id='mutationType"+(i)+"'  class=\"form-control\">\n" +
+      "                    <option value=''>Choose...</option>\n" +
+      "                    <option value=\"Flipping\">Flipping</option>\n" +
+      "                    <option value=\"Sizer\">Sizer</option>\n" +
+      "                </select>\n" +
+      "            </div>\n" +
+      "            <div class=\"form-group col-md-3\">\n" +
+      "                <label for=\"probability"+i+"\">Probability(1-100)</label>\n" +
+      "                <input type=\"number\" value="+(0)+" class=\"form-control\" id=\"probability"+i+"\" placeholder=\"Probability\">\n" +
+      "            </div>\n" +
+      "            <div class=\"form-group col-md-3\">\n" +
+      "                <label for=\"tupples"+i+"\">Max Tupples</label>\n" +
+      "                <input type=\"number\" value="+(0)+" class=\"form-control\" id=\"tupples"+i+"\" placeholder=\"Tupples\">\n" +
+      "            </div>\n" +
+      "            <div class=\"form-group col-md-1\">\n" +
+      "                <label for=\"component"+i+"\">Component</label>\n" +
+      "                <select id=\"component"+i+"\" class=\"form-control\">\n" +
+      "                    <option value=''>Choose...</option>\n" +
+      "                    <option value=\"D\">D</option>\n" +
+      "                    <option value=\"H\">H</option>\n" +
+      "                    <option value=\"T\">T</option>\n" +
+      "                    <option value=\"C\">C</option>\n" +
+      "                    <option value=\"S\">S</option>\n" +
+      "                </select>\n" +
+      "            </div>\n" +
+      "            <div class=\"form-group col-md-2\">\n" +
+      "               <button id='mutationBtn"+(i)+"'  onclick='removeMutation("+(i)+")' class=\"btn btn-danger\">Remove</button>" +
+      "            </div>\n" +
+      "        </div>");
+  mutationsCount ++;
+  $('#mutationsRows').append(mutationHtml);
+
+  return false;
+}
+
+function removeMutation(index) {
+  $('#mutationRow' + index).remove();
+  debugger
+  try {
+    for (var i = index + 1; i < mutationsCount; i++) {
+      $('#mutationRow' + i).attr("id", "mutationRow" + (i - 1));
+      $('#mutationType' + i).attr("id", 'mutationType' + (i - 1));
+      $('#probability' + i).attr("id", 'probability' + (i - 1));
+      $('#tupples' + i).attr("id", 'tupples' + (i - 1));
+      $('#component' + i).attr("id", 'component' + (i - 1));
+      $('#mutationBtn' + (i)).attr("id", "mutationBtn" + (i - 1)).attr("onclick", "removeMutation(" + (i - 1) + ")")
+    }
+
+    mutationsCount--;
+  }catch (e){
+    console.error(e);
+  }
+  return false;
+}

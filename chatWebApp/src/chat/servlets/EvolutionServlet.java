@@ -87,14 +87,12 @@ public class EvolutionServlet extends HttpServlet {
         private boolean running;
         private boolean finished;
         private double percentage;
-        private String solutionFitness;
         private UserEvConfig evConfig;
         private boolean paused;
         private Boolean viewingOptions;
-        private String RawSolution;
-        private String teacherIdsMenu;
-        private String classIdsMenu;
         private boolean isValidTable;
+        Integer currentGeneration;
+        Double bestFitness;
 
         public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
             this.version = version;
@@ -112,17 +110,16 @@ public class EvolutionServlet extends HttpServlet {
                     this.paused = task.isPaused();
                     this.percentage = task.getPercentage();
                     this.evConfig = new UserEvConfig(task.getEvolutionConfig());
+                    this.currentGeneration = task.getCurrentGeneration();
+                    this.bestFitness = task.getCurrentBestFitness();
 
                     if(this.finished) {
                         viewingOptions = true;
-                        SolutionFitness<Lesson> solution = task.getGlobalSolution();
+
                         int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
                         int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
                         Set<Integer> teacherIds =evolutionProblem.getTimeTable().getTimeTableMembers().getTeachers().keySet();
                         Set<Integer> classIds =evolutionProblem.getTimeTable().getTimeTableMembers().getGrades().keySet();
-                        TimeTableMembers solTimeTableDetails=evolutionProblem.getTimeTable().getTimeTableMembers();
-                        //showRawSolution(solution, evolutionProblem.getTimeTable());
-                       // showTable("Class",1,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
                     }
                 }else{
                     this.evConfig = new UserEvConfig(evolutionProblem.getTimeTable().getEvolutionConfig());
