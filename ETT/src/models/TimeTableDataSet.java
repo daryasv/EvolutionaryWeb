@@ -212,6 +212,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                     classesByHour.get(hourInDay).add(l.getClassId());
                 }
                 return (1 - (fails / lessons.size())) * 100;
+
             case Knowledgeable:
                 for (Lesson lesson : lessons) {
                     if (lesson.getSubjectId() != -1) {
@@ -226,6 +227,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                     }
                 }
                 return (1 - (fails / lessons.size())) * 100;
+
             case Satisfactory:
 
                 HashMap<Integer, HashMap<Integer, Integer>> hoursByClass = new HashMap<>();
@@ -284,6 +286,7 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                 return (1 - (fails / totalSubjectsExpect)) * 100;
 
             case DayOffTeacher:
+
                 List<Integer> days = new ArrayList<>();
                 HashMap<Integer, List<Integer>> teacherDays = new HashMap<>();
                 for (Lesson l : lessons) {
@@ -336,7 +339,27 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
 
             case WorkingHoursPreference:
 
-                break;
+                int count = 0;
+                HashMap<Integer, Integer> teachersHours = new HashMap<>();
+                for (Lesson l : lessons) {
+                    int id = l.getTeacherId();
+                    if (!teachersHours.containsKey(id)) {
+                        teachersHours.put(id,0);
+                        count=0;
+                    }
+                    else
+                    {
+                        count++;
+                        teachersHours.put(id,count);
+                    }
+                }
+                for (int key: teachersHours.keySet()) {
+                    if(teachersHours.get(key) != this.timeTableMembers.getTeachers().get(key).getWorkingHoursPreference()){
+                        fails++;
+                    }
+                }
+                return (1 - (fails / teachersHours.keySet().size())) * 100;
+
             default:
                 break;
         }

@@ -10,11 +10,21 @@ import java.util.List;
 public class Teacher extends Component{
 
     private List<Integer> subjectsIdsList;
+    private int workingHoursPreference;
 
     public Teacher(ETTTeacher ettTeacher) throws ValidationException {
         setId(ettTeacher.getId());
         setName(ettTeacher.getETTName());
         setSubjectsIdsList(ettTeacher);
+        setWorkingHoursPreference(ettTeacher.getETTWorkingHours());
+    }
+
+    private void setWorkingHoursPreference(int ettWorkingHours) {
+        this.workingHoursPreference = ettWorkingHours;
+    }
+
+    public int getWorkingHoursPreference() {
+        return workingHoursPreference;
     }
 
     public List<Integer> getSubjectsIdsList() {
