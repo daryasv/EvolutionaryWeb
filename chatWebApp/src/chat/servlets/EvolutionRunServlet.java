@@ -37,7 +37,6 @@ public class EvolutionRunServlet extends HttpServlet {
 
 
         try {
-            UserEvConfig evConfig = new UserEvConfig(request);
 
             synchronized (getServletContext()) {
                 if (stop) {
@@ -45,6 +44,7 @@ public class EvolutionRunServlet extends HttpServlet {
                 } else if (pause) {
                     evolutionManager.pauseEvolution(evolutionId, username);
                 } else {
+                    UserEvConfig evConfig = new UserEvConfig(request);
                     evolutionManager.runEvolution(evolutionId, username, evConfig.getEvolutionConfig());
                 }
             }
