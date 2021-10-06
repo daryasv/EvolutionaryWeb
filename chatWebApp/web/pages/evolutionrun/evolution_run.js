@@ -61,6 +61,8 @@ function loadPageData(evolutionData,all){
       }
       $('#mutationsRows').html(mutationsHtml);
     }
+    $('#currentGen').text(evolutionData.currentGeneration || 0);
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2)+"%");
   }
   const percentage = evolutionData.percentage || 0;
 
@@ -97,6 +99,10 @@ function loadPageData(evolutionData,all){
       $('#run_evolution').attr("disabled",false).attr("class","btn btn-primary").text(paused ? "Resume" : "Start");
       $('#stop_evolution').attr("class",paused? "btn btn-danger": "btn btn-secondary").attr("disabled",!paused);
     }
+  }
+  if(running){
+    $('#currentGen').text(evolutionData.currentGeneration || 0);
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2) + "%");
   }
 }
 

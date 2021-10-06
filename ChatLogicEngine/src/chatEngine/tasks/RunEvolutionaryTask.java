@@ -83,7 +83,10 @@ public class RunEvolutionaryTask implements Runnable {
     }
 
     public SolutionFitness<Lesson> getGlobalSolution(){
-        return evolutionary.getGlobalBestSolution();
+        if(evolutionary !=null) {
+            return evolutionary.getGlobalBestSolution();
+        }
+        return null;
     }
 
     public List<SolutionFitness<Lesson>> getBestSolution(){
@@ -113,5 +116,19 @@ public class RunEvolutionaryTask implements Runnable {
 
     public boolean isPaused() {
         return pause;
+    }
+
+    public Integer getCurrentGeneration() {
+        if(evolutionary !=null){
+            return evolutionary.getCurrentGeneration();
+        }
+        return null;
+    }
+
+    public Double getCurrentBestFitness() {
+        if(evolutionary !=null){
+            return evolutionary.getGlobalBestSolution().getFitness();
+        }
+        return null;
     }
 }
