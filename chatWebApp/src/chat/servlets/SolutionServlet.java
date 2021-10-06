@@ -11,12 +11,7 @@ import com.google.gson.Gson;
 import engine.models.IRule;
 import engine.models.Solution;
 import engine.models.SolutionFitness;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import models.Lesson;
-
-import models.evolution.EvolutionConfig;
-
 import models.LessonSortType;
 import models.TimeTableDataSet;
 import models.timeTable.TimeTableMembers;
@@ -30,41 +25,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-@WebServlet(name = "EvolutionServlet", urlPatterns = {"/settings"})
-public class EvolutionServlet extends HttpServlet {
+@WebServlet(name = "SolutionServlet", urlPatterns = {"/solution"})
+public class SolutionServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         response.setContentType("application/json");
         EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
         String username = SessionUtils.getUsername(request);
-        if (username == null) {
-            response.sendRedirect(request.getContextPath() + "/index.html");
-        }
-
-        /*
-        verify chat version given from the user is a valid number. if not it is considered an error and nothing is returned back
-        Obviously the UI should be ready for such a case and handle it properly
-         */
         int evolutionId = ServletUtils.getIntParameter(request, Constants.EVOLUTION_SETTINGS_ID);
-
-//        if (chatVersion == Constants.INT_PARAMETER_ERROR) {
-//            return;
-//        }
-
-        /*
-        Synchronizing as minimum as I can to fetch only the relevant information from the chat manager and then only processing and sending this information onward
-        Note that the synchronization here is on the ServletContext, and the one that also synchronized on it is the chat servlet when adding new chat lines.
-         */
-
         EvolutionProblem evolutionProblem;
-        synchronized (getServletContext()) {
-            evolutionProblem = evolutionManager.getEvolutionProblemsMap().get(evolutionId);
-        }
+        evolutionProblem = evolutionManager.getEvolutionProblemsMap().get(evolutionId);
+
+        int objectId = ServletUtils.getIntParameter(request, "objectId");
+        String viewType = request.getParameter("type");
 
         // log and create the response json string
-        EvolutionAndVersion cav = new EvolutionAndVersion(0,evolutionProblem,username);
+        SolutionServlet.showSolution cav = new SolutionServlet.showSolution(0,evolutionProblem,username, viewType, objectId);
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(cav);
         logServerMessage(jsonResponse);
@@ -73,62 +50,34 @@ public class EvolutionServlet extends HttpServlet {
             out.print(jsonResponse);
             out.flush();
         }
-
     }
 
     private void logServerMessage(String message){
         System.out.println(message);
     }
-    
-    private static class EvolutionAndVersion {
 
-        final private int version;
-        final private String settings;
-        private boolean running;
-        private boolean finished;
-        private double percentage;
+    private static class showSolution {
         private String solutionFitness;
-        private UserEvConfig evConfig;
-        private boolean paused;
         private Boolean viewingOptions;
         private String RawSolution;
-        private String teacherIdsMenu;
-        private String classIdsMenu;
         private boolean isValidTable;
 
-        public EvolutionAndVersion( int version, EvolutionProblem evolutionProblem,String username) {
-            this.version = version;
-            running = false;
-            finished = false;
-            viewingOptions = false;
-            percentage = 0;
-            if(evolutionProblem!=null && evolutionProblem.getTimeTable() !=null) {
-                this.settings = evolutionProblem.getTimeTableSettings();
-                boolean exists = evolutionProblem.getEvolutionRuns().containsKey(username);
-                if(exists){
-                    RunEvolutionaryTask task = evolutionProblem.getEvolutionRuns().get(username);
-                    this.running = task.isRunning();
-                    this.finished = task.isFinished();
-                    this.paused = task.isPaused();
-                    this.percentage = task.getPercentage();
-                    this.evConfig = new UserEvConfig(task.getEvolutionConfig());
+        public showSolution( int version, EvolutionProblem evolutionProblem,String username, String type, int id) {
 
-                    if(this.finished) {
-                        viewingOptions = true;
-                        SolutionFitness<Lesson> solution = task.getGlobalSolution();
-                        int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
-                        int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
-                        Set<Integer> teacherIds =evolutionProblem.getTimeTable().getTimeTableMembers().getTeachers().keySet();
-                        Set<Integer> classIds =evolutionProblem.getTimeTable().getTimeTableMembers().getGrades().keySet();
-                        TimeTableMembers solTimeTableDetails=evolutionProblem.getTimeTable().getTimeTableMembers();
-                        //showRawSolution(solution, evolutionProblem.getTimeTable());
-                       // showTable("Class",1,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
-                    }
-                }else{
-                    this.evConfig = new UserEvConfig(evolutionProblem.getTimeTable().getEvolutionConfig());
-                }
-            }else{
-                settings = "";
+            RunEvolutionaryTask task = evolutionProblem.getEvolutionRuns().get(username);
+            viewingOptions = true;
+            SolutionFitness<Lesson> solution = task.getGlobalSolution();
+            int totalDays=evolutionProblem.getTimeTable().getTimeTableMembers().getDays();
+            int totalHours=evolutionProblem.getTimeTable().getTimeTableMembers().getHours();
+            Set<Integer> teacherIds =evolutionProblem.getTimeTable().getTimeTableMembers().getTeachers().keySet();
+            Set<Integer> classIds =evolutionProblem.getTimeTable().getTimeTableMembers().getGrades().keySet();
+            TimeTableMembers solTimeTableDetails=evolutionProblem.getTimeTable().getTimeTableMembers();
+            if(type.equals("raw"))
+                showRawSolution(solution, evolutionProblem.getTimeTable());
+            else if(type.equals("class"))
+                showTable("Class",id,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
+            else if(type.equals("teacher")){
+                showTable("Teacher",id,solution.getSolution(),totalDays,totalHours,solution,solTimeTableDetails);
             }
         }
 
@@ -144,13 +93,13 @@ public class EvolutionServlet extends HttpServlet {
             sb.append("<br><br>");
             sb.append("<input type=\"submit\" value=\"Submit\">");
             sb.append("</form>");
-            this.teacherIdsMenu = sb.toString();
+           // this.teacherIdsMenu = sb.toString();
         }
 
         public void showRawSolution(SolutionFitness<Lesson> solutionF, TimeTableDataSet dataSet){
             Solution<Lesson> timeTableSolution = dataSet.sort(solutionF.getSolution(), LessonSortType.DayTimeOriented.toString(),null);
             StringBuilder sb = new StringBuilder();
-        //    createHTMLScrollBar(sb);
+            //    createHTMLScrollBar(sb);
             for (int i = 0; i < timeTableSolution.getList().size(); i++) {
                 int classId = timeTableSolution.getList().get(i).getClassId();
                 int teacher = timeTableSolution.getList().get(i).getTeacherId();
@@ -162,7 +111,7 @@ public class EvolutionServlet extends HttpServlet {
                 }
             }
             sb.append("</body>");
-           this.RawSolution = sb.toString();
+            this.RawSolution = sb.toString();
         }
 
 
@@ -281,73 +230,39 @@ public class EvolutionServlet extends HttpServlet {
             }
         }
         private void buildTable(String typeTitle, int typeIdTitle,HashMap<Integer,List<String>> tableContentLst , int totalDays, int totalHours, SolutionFitness solutionDetails) {
-          StringBuilder page = new StringBuilder();
-          page.append("<style>");
-          page.append("table, th, td {\n" +
-                  "  border:1px solid black;\n" +
-                  "}");
-          page.append("</style>");
-          page.append("<body>");
-          page.append("<h2>"+ typeTitle+ " ID: " + typeIdTitle+ "</h2>");
-          page.append("<table style=\"width:100%\">");
-          createDaysInTable(totalDays, page);
+            StringBuilder page = new StringBuilder();
+            page.append("<style>");
+            page.append("table, th, td {\n" +
+                    "  border:1px solid black;\n" +
+                    "}");
+            page.append("</style>");
+            page.append("<body>");
+            page.append("<h2>"+ typeTitle+ " ID: " + typeIdTitle+ "</h2>");
+            page.append("<table style=\"width:100%\">");
+            createDaysInTable(totalDays, page);
 
-          for(int hour=0; hour<totalHours; hour++){
-              page.append("<tr>");
-              page.append(String.format("<th>Hour: %d</th>", hour+1));
-              for(int day=1; day<=totalDays; day++){
-                  List <String> lessonsInADay= tableContentLst.get(day);
-                  page.append("<th>"+ lessonsInADay.get(hour)+"</th>");
-              }
-              page.append("/<tr>");
-          }
-          page.append("</table>");
-          String validword= isValidTable? "":"not";
-          String validMsg= String.format("This table is %s valid<br>",validword);
-          page.append("<p>"+validMsg+"</p>");
-          showRulesDetails(solutionDetails.getRulesFitness(),page);
-          page.append("</body>");
-          this.solutionFitness = page.toString();
+            for(int hour=0; hour<totalHours; hour++){
+                page.append("<tr>");
+                page.append(String.format("<th>Hour: %d</th>", hour+1));
+                for(int day=1; day<=totalDays; day++){
+                    List <String> lessonsInADay= tableContentLst.get(day);
+                    page.append("<th>"+ lessonsInADay.get(hour)+"</th>");
+                }
+                page.append("/<tr>");
+            }
+            page.append("</table>");
+            String validword= isValidTable? "":"not";
+            String validMsg= String.format("This table is %s valid<br>",validword);
+            page.append("<p>"+validMsg+"</p>");
+            showRulesDetails(solutionDetails.getRulesFitness(),page);
+            page.append("</body>");
+            this.solutionFitness = page.toString();
         }
     }
 
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 }
