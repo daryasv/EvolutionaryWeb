@@ -1,5 +1,7 @@
 var SETTINGS = buildUrlWithContextPath("settings");
 var RUN_URL = buildUrlWithContextPath("run_evolution");
+var SHOW_SOLUTION_URL = buildUrlWithContextPath("solution");
+
 
 function getId(){
   const urlSearchParams = new URLSearchParams(window.location.search);
@@ -104,6 +106,7 @@ function getPageData(all){
     success: function(evolutionData) {
       loadPageData(evolutionData,all);
     }
+
   });
 }
 
@@ -231,15 +234,18 @@ $(function() { // onload...do
     return false;
   });
 
+
+
+
   $("#show_solution").on("click",function(e) {
     var url = SHOW_SOLUTION_URL;
     e.preventDefault();
+
     var type =  $('#viewOptionSelect').val();
-    var objectId;
+    var objectId=0;
     if(type === "teacher" || type === "class"){
       objectId = $('#tableObjectId').val();
     }
-
     $.ajax({
       data: {
         evoId: id,
@@ -254,11 +260,15 @@ $(function() { // onload...do
         alert(error.responseText || "Something went wrong. Check the details and try again")
       },
       success: function(response) {
-        //todo: insert table by response
-        //$('#solutionTable').html();
+        if(type==="raw"){
+             $('#solutionTable').html(response.RawSolution);
+        }
+        else{
+             $('#solutionTable').html(response.solutionFitness);
+        }
       }
     });
 
-    return false;
+
   });
 });
