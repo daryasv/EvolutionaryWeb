@@ -261,10 +261,10 @@ $(function() { // onload...do
       },
       success: function(response) {
         if(type==="raw"){
-             $('#solutionTable').html(evolutionData.RawSolution);
+             $('#solutionTable').html(response.RawSolution);
         }
         else{
-             $('#solutionTable').html(evolutionData.solutionFitness);
+             $('#solutionTable').html(response.solutionFitness);
         }
       }
     });

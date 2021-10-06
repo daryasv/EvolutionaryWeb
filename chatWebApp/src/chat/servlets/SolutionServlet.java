@@ -30,6 +30,7 @@ public class SolutionServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Boolean isValidId=true;
         response.setContentType("application/json");
         EvolutionManager evolutionManager = ServletUtils.getEvolutionManager(getServletContext());
         String username = SessionUtils.getUsername(request);
@@ -40,16 +41,32 @@ public class SolutionServlet extends HttpServlet {
         int objectId = ServletUtils.getIntParameter(request, "objectId");
         String viewType = request.getParameter("type");
 
-        // log and create the response json string
-        SolutionServlet.showSolution cav = new SolutionServlet.showSolution(0,evolutionProblem,username, viewType, objectId);
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(cav);
-        logServerMessage(jsonResponse);
-
-        try (PrintWriter out = response.getWriter()) {
-            out.print(jsonResponse);
-            out.flush();
+        if(viewType.equals("teacher")){
+            Set<Integer> teacherIds =evolutionProblem.getTimeTable().getTimeTableMembers().getTeachers().keySet();
+            isValidId=isIdExist(objectId, teacherIds);
         }
+        else if(viewType.equals("class")){
+            Set<Integer> classIds =evolutionProblem.getTimeTable().getTimeTableMembers().getGrades().keySet();
+            isValidId=isIdExist(objectId, classIds);
+        }
+
+        if(isValidId){
+            // log and create the response json string
+            SolutionServlet.showSolution cav = new SolutionServlet.showSolution(0,evolutionProblem,username, viewType, objectId);
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(cav);
+            logServerMessage(jsonResponse);
+
+            try (PrintWriter out = response.getWriter()) {
+                out.print(jsonResponse);
+                out.flush();
+            }
+        }
+        else{
+            ServletUtils.setError("id doesn't exist",response);
+        }
+
+
     }
 
     private void logServerMessage(String message){
@@ -61,6 +78,8 @@ public class SolutionServlet extends HttpServlet {
         private Boolean viewingOptions;
         private String RawSolution;
         private boolean isValidTable;
+
+
 
         public showSolution( int version, EvolutionProblem evolutionProblem,String username, String type, int id) {
 
@@ -81,20 +100,6 @@ public class SolutionServlet extends HttpServlet {
             }
         }
 
-        private void setTeacherIdsMenu(Set<Integer> teacherIds){
-            StringBuilder sb = new StringBuilder();
-            sb.append("<form action=\"/action_page.php\">");
-            sb.append("<label for=\"\">Choose an id:</label>");
-            sb.append("<select name=\"id\" id=\"TeacherId\">");
-            for (int id:teacherIds) {
-                sb.append(String.format("<option value=\"%d\">%d</option>", id, id));
-            }
-            sb.append("</select>");
-            sb.append("<br><br>");
-            sb.append("<input type=\"submit\" value=\"Submit\">");
-            sb.append("</form>");
-           // this.teacherIdsMenu = sb.toString();
-        }
 
         public void showRawSolution(SolutionFitness<Lesson> solutionF, TimeTableDataSet dataSet){
             Solution<Lesson> timeTableSolution = dataSet.sort(solutionF.getSolution(), LessonSortType.DayTimeOriented.toString(),null);
@@ -170,6 +175,7 @@ public class SolutionServlet extends HttpServlet {
             }
             return lessonsPerDay;
         }
+
 
 
         public List<Lesson> getDayHourSolution(Solution<Lesson> solution,int day, int hour){
@@ -260,6 +266,13 @@ public class SolutionServlet extends HttpServlet {
         }
     }
 
+    public Boolean isIdExist(int chosenID, Set<Integer> teacherIds){
+        for (int id:teacherIds) {
+            if (id==chosenID)
+                return true;
+        }
+        return false;
+    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
