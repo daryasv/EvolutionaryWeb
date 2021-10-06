@@ -339,18 +339,15 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
 
             case WorkingHoursPreference:
 
-                int count = 0;
                 HashMap<Integer, Integer> teachersHours = new HashMap<>();
                 for (Lesson l : lessons) {
                     int id = l.getTeacherId();
                     if (!teachersHours.containsKey(id)) {
-                        teachersHours.put(id,0);
-                        count=0;
+                        teachersHours.put(id,1);
                     }
                     else
                     {
-                        count++;
-                        teachersHours.put(id,count);
+                        teachersHours.put(id,teachersHours.get(id)+1);
                     }
                 }
                 for (int key: teachersHours.keySet()) {
