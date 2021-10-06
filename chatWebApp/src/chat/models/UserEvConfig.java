@@ -25,14 +25,16 @@ public class UserEvConfig {
     List<Mutation> mutations;
 
     public UserEvConfig(EvolutionConfig evolutionConfig){
-        this.populationSize = evolutionConfig.getInitialPopulation();
-        this.selectionType = evolutionConfig.getSelection().getType().toString();
-        this.selectionPercentage = evolutionConfig.getSelection().getValue();
-        this.elitismSize = evolutionConfig.getSelection().getElitismCount();
-        this.crossoverType = evolutionConfig.getCrossover().getName().toString();
-        this.cuttingPoints = evolutionConfig.getCrossover().getCuttingPoints();
-        this.orientationType = evolutionConfig.getCrossover().getConfiguration();
-        this.mutations = evolutionConfig.getMutations();
+        if(evolutionConfig != null) {
+            this.populationSize = evolutionConfig.getInitialPopulation();
+            this.selectionType = evolutionConfig.getSelection().getType().toString();
+            this.selectionPercentage = evolutionConfig.getSelection().getValue();
+            this.elitismSize = evolutionConfig.getSelection().getElitismCount();
+            this.crossoverType = evolutionConfig.getCrossover().getName().toString();
+            this.cuttingPoints = evolutionConfig.getCrossover().getCuttingPoints();
+            this.orientationType = evolutionConfig.getCrossover().getConfiguration();
+            this.mutations = evolutionConfig.getMutations();
+        }
     }
 
     public UserEvConfig(HttpServletRequest request) throws ValidationException {

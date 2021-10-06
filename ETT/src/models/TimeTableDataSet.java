@@ -21,14 +21,12 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
 
     public TimeTableDataSet(ETTDescriptor descriptor, int generations, int generationsInterval) throws ValidationException {
         this.timeTableMembers = new TimeTableMembers(descriptor.getETTTimeTable());
-        this.evolutionConfig = new EvolutionConfig(descriptor.getETTEvolutionEngine());
         setGenerations(generations);
         setGenerationsInterval(generationsInterval);
     }
 
     public TimeTableDataSet(ETTDescriptor descriptor) throws ValidationException {
         this.timeTableMembers = new TimeTableMembers(descriptor.getETTTimeTable());
-        this.evolutionConfig = new EvolutionConfig(descriptor.getETTEvolutionEngine());
     }
 
     public TimeTableMembers getTimeTableMembers() {
