@@ -2,7 +2,6 @@ package engine;
 
 import engine.models.*;
 
-import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -150,28 +149,36 @@ public class Evolutionary<T> {
         List<SolutionFitness<T>> list = new ArrayList<>(map);
         List<SolutionFitness<T>> elites = new ArrayList<>();
 
-        if(selectionData.getElitismCount() > 0){
+        if (selectionData.getElitismCount() > 0)
+        {
             list.sort((obj01, obj02) -> obj02.compareTo(obj01));
             int toPull = Math.min(selectionData.getElitismCount(), list.size());
-            elites = new ArrayList<>(list.subList(0,toPull));
-            list = list.subList(toPull,list.size());
+            elites = new ArrayList<>(list.subList(0, toPull));
+            list = list.subList(toPull, list.size());
         }
 
-        if(selectionData.getType() == SelectionType.Truncation){
+        if (selectionData.getType() == SelectionType.Truncation)
+        {
             list.sort((obj01, obj02) -> obj02.compareTo(obj01));
-            double value = selectionData.getValue();
-            int numToPull = (int)((value / 100) * list.size());
-            list = list.subList(0,numToPull);
-        } else if(selectionData.getType() == SelectionType.RouletteWheel){
+            double value = selectionData.getConfiguration();
+            int numToPull = (int) ((value / 100) * list.size());
+            list = list.subList(0, numToPull);
+        }
+
+        else if (selectionData.getType() == SelectionType.RouletteWheel)
+        {
             List<SolutionFitness<T>> selected = new ArrayList<>();
             list.sort(SolutionFitness::compareTo);
             WeightedRandom<SolutionFitness<T>> weightedRandom = new WeightedRandom<>();
-            for (SolutionFitness<T> solutionFitness:list){
-                weightedRandom.addEntry(solutionFitness,solutionFitness.getFitness());
+            for (SolutionFitness<T> solutionFitness : list)
+            {
+                weightedRandom.addEntry(solutionFitness, solutionFitness.getFitness());
             }
-            for(int i=0;i<list.size();i++){
+            for (int i = 0; i < list.size(); i++)
+            {
                 SolutionFitness<T> rnd = weightedRandom.getRandom();
-                if(rnd !=null) {
+                if (rnd != null)
+                {
                     selected.add(weightedRandom.getRandom());
                 }
             }
@@ -179,8 +186,43 @@ public class Evolutionary<T> {
             list = selected;
         }
 
+        //TODO : check me
+        else if (selectionData.getType() == SelectionType.Tournament)
+        {
+            List<SolutionFitness<T>> selected = new ArrayList<>();
+            Random rand = new Random();
+            int randomIndex;
+            double pte = selectionData.getConfiguration();
+
+            for (int i = 0; i < list.size(); i++) {
+
+                randomIndex = rand.nextInt(list.size());
+                SolutionFitness<T> randomParent1 = list.get(randomIndex);
+                randomIndex = rand.nextInt(list.size());
+                SolutionFitness<T> randomParent2 = list.get(randomIndex);
+
+                SolutionFitness<T> parentHigherFitness;
+                SolutionFitness<T> parentLowerFitness;
+                if (randomParent1.getFitness() >= randomParent2.getFitness()) {
+                    parentHigherFitness = randomParent1;
+                    parentLowerFitness = randomParent2;
+                }
+                else
+                {
+                    parentHigherFitness = randomParent2;
+                    parentLowerFitness = randomParent1;
+                }
+
+                if(pte >= rand.nextInt(1))
+                    selected.add(parentHigherFitness);
+                else
+                    selected.add(parentLowerFitness);
+            }
+            list = selected;
+        }
+
         list.addAll(elites);
-        return new SelectionResult<T>(elites,list);
+        return new SelectionResult<T>(elites, list);
     }
 
     private List<Solution<T>> crossover(EvolutionDataSet<T> dataSet, Solution<T> parent1, Solution<T> parent2)

@@ -3,7 +3,7 @@ package engine.models;
 public interface ISelectionData {
     SelectionType getType();
 
-    int getValue();
+    double getConfiguration();
 
     int getElitismCount();
 }

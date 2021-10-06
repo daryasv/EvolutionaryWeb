@@ -1,6 +1,5 @@
 package chat.models;
 
-import chat.utils.ServletUtils;
 import exception.ValidationException;
 import models.evolution.Crossover;
 import models.evolution.EvolutionConfig;
@@ -14,7 +13,7 @@ import java.util.List;
 public class UserEvConfig {
     int populationSize;
     String selectionType;
-    int selectionPercentage;
+    double selectionPercentage;
     int elitismSize;
     String crossoverType;
     int cuttingPoints;
@@ -28,7 +27,7 @@ public class UserEvConfig {
         if(evolutionConfig != null) {
             this.populationSize = evolutionConfig.getInitialPopulation();
             this.selectionType = evolutionConfig.getSelection().getType().toString();
-            this.selectionPercentage = evolutionConfig.getSelection().getValue();
+            this.selectionPercentage = evolutionConfig.getSelection().getConfiguration();
             this.elitismSize = evolutionConfig.getSelection().getElitismCount();
             this.crossoverType = evolutionConfig.getCrossover().getName().toString();
             this.cuttingPoints = evolutionConfig.getCrossover().getCuttingPoints();
@@ -109,7 +108,7 @@ public class UserEvConfig {
     public EvolutionConfig getEvolutionConfig() throws ValidationException {
         EvolutionConfig evolutionConfig = new EvolutionConfig();
         evolutionConfig.setInitialPopulation(this.populationSize);
-        Selection selection = new Selection(selectionType,selectionPercentage,elitismSize);
+        Selection selection = new Selection(selectionType, (int) selectionPercentage,elitismSize);
         evolutionConfig.setSelection(selection);
         Crossover crossover = new Crossover();
         crossover.setName(crossoverType);

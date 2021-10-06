@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Selection implements ISelectionData , Serializable
 {
     private SelectionType type;
-    private int value;
+    private double configuration;
     private int elitism;
 
     public Selection(String type,int value,int elitism) throws ValidationException {
@@ -21,7 +21,7 @@ public class Selection implements ISelectionData , Serializable
 
     public Selection(ETTSelection ettSelection) throws ValidationException {
         setType(ettSelection.getType());
-        setValue(ettSelection.getConfiguration());
+        setConfiguration(ettSelection.getConfiguration());
         setElitism(ettSelection.getETTElitism());
     }
 
@@ -50,8 +50,8 @@ public class Selection implements ISelectionData , Serializable
     }
 
     @Override
-    public int getValue() {
-        return value;
+    public double getConfiguration() {
+        return configuration;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Selection implements ISelectionData , Serializable
         return elitism;
     }
 
-    public void setValue(String configuration) throws ValidationException {
+    public void setConfiguration(String configuration) throws ValidationException {
         if(configuration != null) {
             if (!configuration.contains("=")) {
                 throw new ValidationException("Invalid selection config");
@@ -73,7 +73,7 @@ public class Selection implements ISelectionData , Serializable
         if(value < 1 && type == SelectionType.Truncation){
             throw new ValidationException("Invalid selection config");
         }
-        this.value = value;
+        this.configuration = value;
     }
 
 }

@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 public enum SelectionType implements Serializable {
     Truncation("Truncation"),
-    RouletteWheel("RouletteWheel");
+    RouletteWheel("RouletteWheel"),
+    Tournament("Tournament");
 
     public String name;
     SelectionType(String name) {
