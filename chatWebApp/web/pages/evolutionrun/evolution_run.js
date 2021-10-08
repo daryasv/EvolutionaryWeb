@@ -141,7 +141,10 @@ function initElements() {
   });
   $('#selectionInput').on('change', function (e) {
     var val = $(e.target).val();
-    $('#selectionPercentInput').attr("disabled", val !== "Truncation");
+    $('#selectionNumberContainer').attr("class",!val || val ==="RouletteWheel" ? "hidden" : "form-group col-md-4");
+    if(val && val!=="RouletteWheel"){
+      $('#selectionNumberLabel').text(val ==="Truncation"  ? "Selection percentage" : "PTE (0-1)")
+    }
   });
 
   $('#endConditionSelect').on('change', function (e) {

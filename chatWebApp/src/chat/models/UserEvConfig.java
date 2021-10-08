@@ -48,7 +48,7 @@ public class UserEvConfig {
             throw new ValidationException("Invalid selectionType");
         }
         try {
-            selectionPercentage = Integer.parseInt(request.getParameter("selectionPercentage"));
+            selectionPercentage = Double.parseDouble(request.getParameter("selectionPercentage"));
         } catch (Exception e) {
             throw new ValidationException("Invalid selectionPercentage");
         }
@@ -108,7 +108,7 @@ public class UserEvConfig {
     public EvolutionConfig getEvolutionConfig() throws ValidationException {
         EvolutionConfig evolutionConfig = new EvolutionConfig();
         evolutionConfig.setInitialPopulation(this.populationSize);
-        Selection selection = new Selection(selectionType, (int) selectionPercentage,elitismSize);
+        Selection selection = new Selection(selectionType, (double) selectionPercentage,elitismSize);
         evolutionConfig.setSelection(selection);
         Crossover crossover = new Crossover();
         crossover.setName(crossoverType);

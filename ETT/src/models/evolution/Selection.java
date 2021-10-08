@@ -13,9 +13,9 @@ public class Selection implements ISelectionData , Serializable
     private double configuration;
     private int elitism;
 
-    public Selection(String type,int value,int elitism) throws ValidationException {
+    public Selection(String type,double value,int elitism) throws ValidationException {
         setType(type);
-        setTopPercent(value);
+        setConfiguration(value);
         setElitism(elitism);
     }
 
@@ -65,15 +65,22 @@ public class Selection implements ISelectionData , Serializable
                 throw new ValidationException("Invalid selection config");
             }
             int value = Integer.parseInt(configuration.split("=")[1]);
-            setTopPercent(value);
+            setConfiguration(value);
         }
     }
 
-    public void setTopPercent(int value) throws ValidationException {
-        if(value < 1 && type == SelectionType.Truncation){
-            throw new ValidationException("Invalid selection config");
+    public void setConfiguration(double value) throws ValidationException {
+        if(type == SelectionType.Truncation){
+            value = (int) value;
+            if(value < 1 || value > 100){
+                throw new ValidationException("Invalid selection config");
+            }
+        }
+        else if(type ==SelectionType.Tournament){
+            if(value < 0 || value > 1){
+                throw new ValidationException("Invalid selection config");
+            }
         }
         this.configuration = value;
     }
-
 }

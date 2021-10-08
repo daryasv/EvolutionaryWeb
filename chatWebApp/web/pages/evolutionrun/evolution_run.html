@@ -30,11 +30,12 @@
                     <option value="">Choose...</option>
                     <option value="Truncation">Truncation</option>
                     <option value="RouletteWheel">RouletteWheel</option>
+                    <option value="Tournament">Tournament</option>
                 </select>
             </div>
-            <div class="form-group col-md-4">
-                <label for="selectionPercentInput">Selection percentage</label>
-                <input disabled type="number" class="form-control" id="selectionPercentInput" placeholder="Selection percentage">
+            <div class="hidden" id="selectionNumberContainer">
+                <label for="selectionPercentInput" id="selectionNumberLabel">Selection percentage</label>
+                <input type="number" class="form-control" id="selectionPercentInput" placeholder="Selection percentage">
             </div>
             <div class="form-group col-md-4">
                 <label for="elitismInput">Elitism Size</label>
