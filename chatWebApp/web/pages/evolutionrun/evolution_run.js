@@ -147,7 +147,7 @@ function initElements() {
   $('#endConditionSelect').on('change', function (e) {
     var val = $(e.target).val();
     $('#limitInput').attr("disabled", !val || val === "Choose...");
-    $('#limitLabel').text(val === "Time" ? "Limit (Seconds)" : "Limit");
+    $('#limitLabel').text(val === "Time" ? "Limit (Minutes)" : "Limit");
   });
 
   $('#viewOptionSelect').on('change', function (e) {
