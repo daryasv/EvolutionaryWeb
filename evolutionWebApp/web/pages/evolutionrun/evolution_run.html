@@ -5,103 +5,134 @@
     <title>Evolution Run</title>
     <script src="../../common/jquery-2.0.3.min.js"></script>
     <script src="../../common/context-path-helper.js"></script>
+    <script src="../chat/chat.js"></script>
     <script src="evolution_run.js"></script>
     <link rel="stylesheet" href="../../common/bootstrap.min.css">
     <link rel="stylesheet" href="evolution_run.css">
 </head>
 <body>
-    <div class="row flex">
-        <button class="btn" style="margin-right: 10px;" onclick="back()">Back</button>
+<div>
+    <button class="btn" style="margin-right: 10px;" onclick="back()">Back</button>
+
+</div>
+    <div class="container page-header" style="justify-content: space-between;align-items: center">
         <h2>Evolution #<span id="ev_id"></span></h2>
+        <button class="btn btn-primary" id="open_chat_btn" style="margin-right: 10px;" onclick="openchat()">Open chat</button>
     </div>
-    <div class="row"><textarea readonly id="settings-text"></textarea></div>
 
-    <div>
-        <div class="row form-row">
-            <div class="form-group col-md-4">
-                <label for="inputPopSize">Population Size</label>
-                <input type="number" class="form-control" id="inputPopSize" placeholder="Population size">
+    <div class="hidden" id="chat_container">
+        <div class="container">
+        <div class="content">
+            <div id="chatwindow">
+                <h3>Chat</h3>
+
+                <!-- place holder to hold all the chat lines -->
+                <div id="chatarea" class="span6"></div>
+
+                <!-- The actual form through which you send data back to the user -->
+                <form id="chatform" method="POST" action="../lobby/sendChat">
+                    <input type="text" id="userstring" name="userstring"/>
+                    <input type="submit" value="Send"/>
+                </form>
             </div>
         </div>
-        <div class="row form-row">
-            <div class="form-group col-md-4">
-                <label for="selectionInput">Selection type</label>
-                <select id="selectionInput" class="form-control">
-                    <option value="">Choose...</option>
-                    <option value="Truncation">Truncation</option>
-                    <option value="RouletteWheel">RouletteWheel</option>
-                    <option value="Tournament">Tournament</option>
-                </select>
-            </div>
-            <div class="hidden" id="selectionNumberContainer">
-                <label for="selectionPercentInput" id="selectionNumberLabel">Selection percentage</label>
-                <input type="number" class="form-control" id="selectionPercentInput" placeholder="Selection percentage">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="elitismInput">Elitism Size</label>
-                <input type="number" class="form-control" id="elitismInput" placeholder="Elitism Size">
-            </div>
         </div>
-        <div class="row form-row">
-            <div class="form-group col-md-4">
-                <label for="crossoverType">Crossover type</label>
-                <select id="crossoverType" class="form-control">
-                    <option >Choose...</option>
-                    <option value="DayTimeOriented">Day Time Oriented</option>
-                    <option value="AspectOriented">Aspect Oriented</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="cuttingPointsInput">Cutting points</label>
-                <input type="number" class="form-control" id="cuttingPointsInput" placeholder="Crossover cutting points">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="orientationInput">Orientation type</label>
-                <select disabled id="orientationInput" class="form-control">
-                    <option>Choose...</option>
-                    <option value="CLASS">Class</option>
-                    <option value="TEACHER">Teacher</option>
-                </select>
-            </div>
-        </div>
+    </div>
+    <div class="container">
+        <h3>Time table data</h3>
         <div class="row">
-            <div>
-                <label>Mutations:</label>
-            </div>
-            <button id="addMutationBtn" class="btn btn-primary">Add mutation</button>
-            <div id="mutationsRows"></div>
-        </div>
-        <div class="row form-row">
-            <div class="form-group col-md-4">
-                <label for="endConditionSelect">End condition</label>
-                <select id="endConditionSelect" class="form-control">
-                    <option>Choose...</option>
-                    <option value="Generations">Generations</option>
-                    <option value="Fitness">Fitness</option>
-                    <option value="Time">Time</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="limitInput" id="limitLabel">Limit</label>
-                <input type="number" disabled class="form-control" id="limitInput" placeholder="Limit">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="limitInput">Generations Interval</label>
-                <input type="number" class="form-control" id="intervalInput" placeholder="Interval">
-            </div>
-        </div>
-        <div class="row form-group">
-            <button id="run_evolution" class="btn btn-primary" type="submit">Start</button>
-            <button id="stop_evolution" disabled class="btn btn-secondary" type="submit">Stop</button>
+            <textarea readonly id="settings-text"></textarea>
         </div>
     </div>
-
-    <div class="row">
+    <div class="container">
+        <h3>Run settings</h3>
+        <div>
+            <div class="row form-row">
+                <div class="form-group col-md-4">
+                    <label for="inputPopSize">Population Size</label>
+                    <input type="number" class="form-control" id="inputPopSize" placeholder="Population size">
+                </div>
+            </div>
+            <div class="row form-row">
+                <h4>Selection</h4>
+                <div class="form-group col-md-4">
+                    <label for="selectionInput">Selection type</label>
+                    <select id="selectionInput" class="form-control">
+                        <option value="">Choose...</option>
+                        <option value="Truncation">Truncation</option>
+                        <option value="RouletteWheel">RouletteWheel</option>
+                        <option value="Tournament">Tournament</option>
+                    </select>
+                </div>
+                <div class="hidden" id="selectionNumberContainer">
+                    <label for="selectionPercentInput" id="selectionNumberLabel">Selection percentage</label>
+                    <input type="number" class="form-control" id="selectionPercentInput" placeholder="Selection percentage">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="elitismInput">Elitism Size</label>
+                    <input type="number" class="form-control" id="elitismInput" placeholder="Elitism Size">
+                </div>
+            </div>
+            <div class="row form-row">
+                <h4>Crossover</h4>
+                <div class="form-group col-md-4">
+                    <label for="crossoverType">Crossover type</label>
+                    <select id="crossoverType" class="form-control">
+                        <option >Choose...</option>
+                        <option value="DayTimeOriented">Day Time Oriented</option>
+                        <option value="AspectOriented">Aspect Oriented</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="cuttingPointsInput">Cutting points</label>
+                    <input type="number" class="form-control" id="cuttingPointsInput" placeholder="Crossover cutting points">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="orientationInput">Orientation type</label>
+                    <select disabled id="orientationInput" class="form-control">
+                        <option>Choose...</option>
+                        <option value="CLASS">Class</option>
+                        <option value="TEACHER">Teacher</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <h4>Mutations</h4>
+                <button id="addMutationBtn" class="btn btn-primary">Add mutation</button>
+                <div id="mutationsRows"></div>
+            </div>
+            <div class="row form-row" style="margin-top: 20px">
+                <h4>End condition</h4>
+                <div class="form-group col-md-4">
+                    <label for="endConditionSelect">End condition</label>
+                    <select id="endConditionSelect" class="form-control">
+                        <option>Choose...</option>
+                        <option value="Generations">Generations</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Time">Time</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="limitInput" id="limitLabel">Limit</label>
+                    <input type="number" disabled class="form-control" id="limitInput" placeholder="Limit">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="limitInput">Generations Interval</label>
+                    <input type="number" class="form-control" id="intervalInput" placeholder="Interval">
+                </div>
+            </div>
+            <div class="row form-group">
+                <button id="run_evolution" class="btn btn-primary" type="submit">Start</button>
+                <button id="stop_evolution" disabled class="btn btn-secondary" type="submit">Stop</button>
+            </div>
+        </div>
+    </div>
+    <div class=" container">
         <label class="col-md-2">Current generation: <span id="currentGen">0</span></label>
         <label class="col-md-2">Best fitness: <span id="bestFitness">0</span></label>
     </div>
 
-    <div class="row">
+    <div class="container">
         <label for="progress-bar">Progress</label>
         <div class="row progress">
             <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0"
@@ -111,7 +142,7 @@
     </div>
 
 
-    <div class="row hidden" id="viewingOptions">
+    <div class=" hidden" id="viewingOptions">
         <h2>view the best solution</h2>
         <div class="row form-row">
             <div class="form-group col-md-4">
@@ -132,7 +163,7 @@
             <button id="show_solution" class="btn btn-primary" type="submit">Show solution</button>
         </div>
     </div>
-    <div class="row" id="solutionTable">
+    <div class="container" id="solutionTable">
     </div>
 
 

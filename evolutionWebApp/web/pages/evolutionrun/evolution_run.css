@@ -21,3 +21,19 @@ body{
 .hidden{
     display: none;
 }
+
+.container{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 10px;
+}
+
+.page-header{
+    display: flex;
+    flex-direction: row;
+}
+
+.page-header:before,.page-header:after{
+    display: none !important;
+}

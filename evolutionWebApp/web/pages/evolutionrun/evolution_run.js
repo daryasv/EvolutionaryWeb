@@ -2,7 +2,6 @@ var SETTINGS = buildUrlWithContextPath("settings");
 var RUN_URL = buildUrlWithContextPath("run_evolution");
 var SHOW_SOLUTION_URL = buildUrlWithContextPath("solution");
 
-
 function getId(){
   const urlSearchParams = new URLSearchParams(window.location.search);
   return urlSearchParams.get("id");
@@ -13,6 +12,7 @@ var running = false;
 var paused = false;
 var mutationsCount = 0;
 var enableViewOptions = false;
+var chatopen = false;
 
 function back(){
   location.href = "../lobby/lobby.html";
@@ -92,7 +92,7 @@ function loadPageData(evolutionData,all) {
   if (enableViewOptions !== evolutionData.viewingOptions) {
     enableViewOptions = !enableViewOptions;
     if (enableViewOptions) {
-      $('#viewingOptions').attr("class", "row");
+      $('#viewingOptions').attr("class", "container");
       if (evolutionData.solutionFitness) {
         $('#solutionTable').html(evolutionData.solutionFitness);
       }
@@ -168,6 +168,17 @@ function initElements() {
     }
   });
   $('#addMutationBtn').on('click', (e) => addMutation(e));
+
+  $('#open_chat_btn').on('click',(e)=>{
+    chatopen = !chatopen;
+    if(chatopen){
+      $('#chat_container').attr("class","row");
+      $('#open_chat_btn').text("Close chat")
+    }else{
+      $('#chat_container').attr("class","hidden");
+      $('#open_chat_btn').text("Open chat")
+    }
+  })
 }
 
 function getRunConfig() {
