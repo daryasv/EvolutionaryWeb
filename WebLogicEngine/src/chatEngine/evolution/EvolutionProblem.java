@@ -1,11 +1,6 @@
 package chatEngine.evolution;
 
-import chatEngine.tasks.EvolutionaryTaskMembers;
 import chatEngine.tasks.RunEvolutionaryTask;
-import engine.Evolutionary;
-import engine.models.EndCondition;
-import engine.models.EvolutionDataSet;
-import models.Lesson;
 import models.TimeTableDataSet;
 import models.evolution.EvolutionConfig;
 import models.timeTable.Grade;
@@ -13,7 +8,6 @@ import models.timeTable.Rule;
 import models.timeTable.Subject;
 import models.timeTable.Teacher;
 
-import java.io.PrintWriter;
 import java.util.*;
 
 public class EvolutionProblem {
