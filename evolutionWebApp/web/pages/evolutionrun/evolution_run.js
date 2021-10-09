@@ -15,7 +15,7 @@ var mutationsCount = 0;
 var enableViewOptions = false;
 
 function back(){
-  location.href = "../chatroom/chatroom.html";
+  location.href = "../lobby/lobby.html";
 }
 
 function printMutations(mutations) {

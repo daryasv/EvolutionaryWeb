@@ -31,7 +31,7 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@WebServlet(name = "EvolutionSettingsServlet", urlPatterns = {"/get_settings","/pages/chatroom/upload_settings"})
+@WebServlet(name = "EvolutionSettingsServlet", urlPatterns = {"/get_settings","/pages/lobby/upload_settings"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class EvolutionSettingsServlet extends HttpServlet {
 
