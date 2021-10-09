@@ -149,7 +149,7 @@ public class TimeTableMembers implements Serializable
         for (ETTRule ettRule : ettRules) {
             Rule rule = new Rule(ettRule);
             if(rules.contains(rule)){
-                throw new ValidationException("Rule " +rule.getId()+ " already exists");
+                throw new ValidationException("Rule " +rule.getId()+ " exists more then once");
             }
             this.rules.add(rule);
         }
@@ -177,4 +177,5 @@ public class TimeTableMembers implements Serializable
         });
         return solution;
     }
+
 }

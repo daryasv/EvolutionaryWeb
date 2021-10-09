@@ -5,6 +5,7 @@ import exception.ValidationException;
 import schema.models.ETTRule;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Rule implements IRule, Serializable {
 
@@ -71,5 +72,17 @@ public class Rule implements IRule, Serializable {
         setType(type);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rule rule = (Rule) o;
+        return id == rule.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 
