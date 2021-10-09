@@ -141,9 +141,10 @@ public class EvolutionProblem {
 
     public synchronized void runEvolution(String username, EvolutionConfig evolutionConfig) {
         if(this.evolutionRuns.containsKey(username)){
+            this.evolutionRuns.get(username).setEvolutionConfig(evolutionConfig);
             new Thread(evolutionRuns.get(username)).start();
         }else {
-            RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,evolutionConfig, "Generations", 1000, 100);
+            RunEvolutionaryTask runEvolutionaryTask = new RunEvolutionaryTask(timeTable,evolutionConfig, evolutionConfig.getEndCondition().toString(),evolutionConfig.getLimit(),evolutionConfig.getInterval());
             new Thread(runEvolutionaryTask).start();
             evolutionRuns.put(username, runEvolutionaryTask);
         }

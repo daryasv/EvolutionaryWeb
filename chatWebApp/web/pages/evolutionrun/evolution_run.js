@@ -59,8 +59,8 @@ function printMutations(mutations) {
 
 }
 
-function loadPageData(evolutionData,all){
-  if(all) {
+function loadPageData(evolutionData,all) {
+  if (all) {
     $('#settings-text').val(evolutionData.settings);
     if (evolutionData.evConfig) {
       $('#inputPopSize').val(evolutionData.evConfig.populationSize);
@@ -70,53 +70,58 @@ function loadPageData(evolutionData,all){
       $('#crossoverType').val(evolutionData.evConfig.crossoverType).change();
       $('#cuttingPointsInput').val(evolutionData.evConfig.cuttingPoints);
       $('#orientationInput').val(evolutionData.evConfig.orientationType).change();
-      if(evolutionData.evConfig.mutations) {
-        mutationsCount =  evolutionData.evConfig.mutations.length;
+      if (evolutionData.evConfig.mutations) {
+        mutationsCount = evolutionData.evConfig.mutations.length;
         printMutations(evolutionData.evConfig.mutations);
-      }else{
+      } else {
         mutationsCount = 0;
       }
+      $('#endConditionSelect').val(evolutionData.evConfig.endCondition).change();
+      $('#limitInput').val(evolutionData.evConfig.endConditionLimit);
+      $('#intervalInput').val(evolutionData.evConfig.generationsInterval);
+
     }
     $('#currentGen').text(evolutionData.currentGeneration || 0);
-    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2)+"%");
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2) + "%");
   }
   const percentage = evolutionData.percentage || 0;
 
   $('#progress-bar').css('width', (percentage) + '%');
   $('#progress-text').text((percentage.toFixed(2)) + '%');
 
-  if(enableViewOptions !== evolutionData.viewingOptions) {
+  if (enableViewOptions !== evolutionData.viewingOptions) {
     enableViewOptions = !enableViewOptions;
-    if(enableViewOptions) {
-      $('#viewingOptions').attr("class","row");
+    if (enableViewOptions) {
+      $('#viewingOptions').attr("class", "row");
       if (evolutionData.solutionFitness) {
         $('#solutionTable').html(evolutionData.solutionFitness);
       }
-    }else{
-      $('#viewingOptions').attr("class","hidden");
+    } else {
+      $('#viewingOptions').attr("class", "hidden");
       $('#solutionTable').html("");
     }
   }
 
   var changed = false;
-  if(evolutionData.paused !== paused){
+  if (evolutionData.paused !== paused) {
     paused = !paused;
     changed = true;
   }
-  if(evolutionData.running !== running){
+  if (evolutionData.running !== running) {
     running = !running;
     changed = true;
   }
-  if(changed){
-    if(running){
-      $('#run_evolution').attr("disabled",false).attr("class","btn btn-secondary").text("Pause");
-      $('#stop_evolution').attr("class","btn btn-danger").attr("disabled",false);
-    }else {
-      $('#run_evolution').attr("disabled",false).attr("class","btn btn-primary").text(paused ? "Resume" : "Start");
-      $('#stop_evolution').attr("class",paused? "btn btn-danger": "btn btn-secondary").attr("disabled",!paused);
+  if (changed) {
+    if (running) {
+      $('#run_evolution').attr("disabled", false).attr("class", "btn btn-secondary").text("Pause");
+      $('#stop_evolution').attr("class", "btn btn-danger").attr("disabled", false);
+    } else {
+      $('#run_evolution').attr("disabled", false).attr("class", "btn btn-primary").text(paused ? "Resume" : "Start");
+      $('#stop_evolution').attr("class", paused ? "btn btn-danger" : "btn btn-secondary").attr("disabled", !paused);
     }
-  }
-  if(running){
+    $('#currentGen').text(evolutionData.currentGeneration || 0);
+    $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2) + "%");
+  } else if (running) {
     $('#currentGen').text(evolutionData.currentGeneration || 0);
     $('#bestFitness').text((evolutionData.bestFitness || 0).toFixed(2) + "%");
   }

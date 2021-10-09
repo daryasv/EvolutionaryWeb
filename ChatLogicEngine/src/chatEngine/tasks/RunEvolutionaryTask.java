@@ -15,7 +15,7 @@ public class RunEvolutionaryTask implements Runnable {
 
     TimeTableDataSet timeTableDataSet;
     EndCondition endCondition;
-    private final int interval;
+    private int interval;
     private Evolutionary<Lesson> evolutionary = null;
     double percentage;
     boolean finished = false;
@@ -25,19 +25,7 @@ public class RunEvolutionaryTask implements Runnable {
     public RunEvolutionaryTask(TimeTableDataSet timeTableDataSet,EvolutionConfig evolutionConfig, String endConditionType, double limit, int interval) {
         this.timeTableDataSet = timeTableDataSet;
         this.timeTableDataSet.setEvolutionConfig(evolutionConfig);
-        EndCondition.EndConditionType endConditionTypeEnum = EndCondition.EndConditionType.valueOfLabel(endConditionType);
-        this.interval = interval;
-        endCondition = new EndCondition() {
-            @Override
-            public EndConditionType getEndCondition() {
-                return endConditionTypeEnum;
-            }
 
-            @Override
-            public double getLimit() {
-                return limit;
-            }
-        };
         percentage = 0;
     }
 
@@ -49,7 +37,22 @@ public class RunEvolutionaryTask implements Runnable {
             if(!pause || evolutionary == null) {
                 evolutionary = new Evolutionary<>();
             }
+            EndCondition.EndConditionType endConditionTypeEnum = timeTableDataSet.getEvolutionConfig().getEndCondition();
+            this.interval = timeTableDataSet.getEvolutionConfig().getInterval();
             timeTableDataSet.setGenerationsInterval(interval);
+            double limit =  timeTableDataSet.getEvolutionConfig().getLimit();
+            endCondition = new EndCondition() {
+                @Override
+                public EndConditionType getEndCondition() {
+                    return endConditionTypeEnum;
+                }
+
+                @Override
+                public double getLimit() {
+                    return limit;
+                }
+            };
+            pause = false;
             evolutionary.run(timeTableDataSet, endCondition, new EngineProgressInterface() {
                 @Override
                 public void update(double work, double done) {
@@ -130,5 +133,9 @@ public class RunEvolutionaryTask implements Runnable {
             return evolutionary.getGlobalBestSolution().getFitness();
         }
         return null;
+    }
+
+    public void setEvolutionConfig(EvolutionConfig evolutionConfig) {
+        timeTableDataSet.setEvolutionConfig(evolutionConfig);
     }
 }

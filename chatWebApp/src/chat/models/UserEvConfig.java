@@ -33,6 +33,9 @@ public class UserEvConfig {
             this.cuttingPoints = evolutionConfig.getCrossover().getCuttingPoints();
             this.orientationType = evolutionConfig.getCrossover().getConfiguration();
             this.mutations = evolutionConfig.getMutations();
+            this.endCondition = evolutionConfig.getEndCondition().name;
+            this.endConditionLimit = evolutionConfig.getLimit();
+            this.generationsInterval = evolutionConfig.getInterval();
         }
     }
 
@@ -116,6 +119,9 @@ public class UserEvConfig {
         crossover.setConfiguration(orientationType);
         evolutionConfig.setCrossover(crossover);
         evolutionConfig.setMutationsList(this.mutations);
+        evolutionConfig.setEndCondition(endCondition);
+        evolutionConfig.setLimit(endConditionLimit);
+        evolutionConfig.setInterval(generationsInterval);
         return evolutionConfig;
     }
 }

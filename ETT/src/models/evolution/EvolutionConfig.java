@@ -1,5 +1,6 @@
 package models.evolution;
 
+import engine.models.EndCondition;
 import exception.ValidationException;
 import schema.models.*;
 
@@ -13,6 +14,9 @@ public class EvolutionConfig implements Serializable
     private Selection selection;
     private Crossover crossover;
     private List<Mutation> mutations;
+    private EndCondition.EndConditionType endCondition;
+    private double limit;
+    private int interval;
 
     public EvolutionConfig(){
 
@@ -84,5 +88,32 @@ public class EvolutionConfig implements Serializable
 
     public void setMutationsList(List<Mutation> mutations){
         this.mutations = mutations;
+    }
+
+    public EndCondition.EndConditionType getEndCondition() {
+        return endCondition;
+    }
+
+    public void setEndCondition(String endCondition) {
+        this.endCondition = EndCondition.EndConditionType.valueOfLabel(endCondition);;
+    }
+
+    public double getLimit() {
+        return limit;
+    }
+
+    public void setLimit(double limit) throws ValidationException {
+        if(limit < 1) {
+            throw new ValidationException("Invalid limit");
+        }
+            this.limit = limit;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 }
