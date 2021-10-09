@@ -163,6 +163,9 @@ function triggerAjaxChatContent() {
 
 //activate the timer calls after the page is loaded
 $(function() {
+    ajaxUsersList();
+    ajaxProblemsList();
+    ajaxChatContent();
 
     //The users list is refreshed automatically every second
     setInterval(ajaxUsersList, refreshRate);
