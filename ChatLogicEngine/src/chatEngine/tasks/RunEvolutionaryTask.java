@@ -23,10 +23,13 @@ public class RunEvolutionaryTask implements Runnable {
     boolean pause = false;
 
     public RunEvolutionaryTask(TimeTableDataSet timeTableDataSet,EvolutionConfig evolutionConfig, String endConditionType, double limit, int interval) {
-        this.timeTableDataSet = timeTableDataSet;
-        this.timeTableDataSet.setEvolutionConfig(evolutionConfig);
-
-        percentage = 0;
+        try {
+            this.timeTableDataSet = (TimeTableDataSet) timeTableDataSet.clone();
+            this.timeTableDataSet.setEvolutionConfig(evolutionConfig);
+            percentage = 0;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

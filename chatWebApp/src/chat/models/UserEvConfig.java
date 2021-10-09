@@ -82,11 +82,17 @@ public class UserEvConfig {
         }
         try {
             endConditionLimit = Double.parseDouble(request.getParameter("endConditionLimit"));
+            if(endConditionLimit < 1){
+                throw new Exception();
+            }
         } catch (Exception e) {
             throw new ValidationException("Invalid endConditionLimit");
         }
         try {
             generationsInterval = Integer.parseInt(request.getParameter("generationsInterval"));
+            if(generationsInterval > endConditionLimit){
+                throw new Exception();
+            }
         } catch (Exception e) {
             throw new ValidationException("Invalid generationsInterval");
         }

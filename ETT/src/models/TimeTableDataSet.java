@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.*;
 
 
-public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable {
+public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable,Cloneable {
 
     final private TimeTableMembers timeTableMembers;
     private EvolutionConfig evolutionConfig;
@@ -414,5 +414,9 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
 
     public void setEvolutionConfig(EvolutionConfig evolutionConfig){
         this.evolutionConfig = evolutionConfig;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
