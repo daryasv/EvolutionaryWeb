@@ -135,3 +135,7 @@ $(function() { // onload...do
 function openEvoSettings(number){
     location.href = "../evolutionrun/evolution_run.html?id="+number;
 }
+
+function logout(){
+    location.href = "../../chat/logout";
+}
