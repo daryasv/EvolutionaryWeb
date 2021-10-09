@@ -372,12 +372,12 @@ public class TimeTableDataSet implements EvolutionDataSet<Lesson>, Serializable 
                 HashMap<Integer, Integer> teachersHours = new HashMap<>();
                 for (Lesson l : lessons) {
                     int id = l.getTeacherId();
-                    if (!teachersHours.containsKey(id)) {
-                        teachersHours.put(id,1);
-                    }
-                    else
-                    {
-                        teachersHours.put(id,teachersHours.get(id)+1);
+                    if (id!=(-1)) {
+                        if (!teachersHours.containsKey(id)) {
+                            teachersHours.put(id, 1);
+                        } else {
+                            teachersHours.put(id, teachersHours.get(id) + 1);
+                        }
                     }
                 }
                 for (int key: teachersHours.keySet()) {

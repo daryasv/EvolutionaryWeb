@@ -186,7 +186,6 @@ public class Evolutionary<T> {
             list = selected;
         }
 
-        //TODO : check me
         else if (selectionData.getType() == SelectionType.Tournament)
         {
             List<SolutionFitness<T>> selected = new ArrayList<>();
